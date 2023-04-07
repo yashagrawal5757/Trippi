@@ -3,5 +3,5 @@ It allows users to search for Airbnbs in a chosen city, compare current and hist
 explore nearby tourist spots based on the neighborhood of their chosen Airbnb, and select categories such as heritage, food, shopping, and more to discover different locations. 
 
 
-Trippi is built using HTML, CSS, JavaScript, and PHP, and uses a MySQL database to store and manage data. 
+Trippi is built using HTML, CSS, JavaScript, React and Node JS, and uses a MySQL database  (hosted on AWS RDS) to store and manage data. 
 This project is developed by **Gokul, Shivani, Yash and Priyanka**.
