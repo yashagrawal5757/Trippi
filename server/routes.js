@@ -345,7 +345,7 @@ const search_songs = async function(req, res) {
      });
 }
 
-// Display the top hosts
+// SIMPLE 1: Display the top hosts
 
 const top_hosts = async function(req, res) {
   connection.query('SELECT h.host_name, COUNT(*) AS num_listings FROM Host h JOIN Listings l ON h.host_id = l.host_id GROUP BY h.host_name ORDER BY num_listings DESC LIMIT 10'
@@ -366,6 +366,34 @@ const top_hosts = async function(req, res) {
   });
   };
 
+// SIMPLE 2: 
+
+const getAttractionsNearListing = async function(req, res) {
+  const listingId = req.query.title ?? '';
+
+  connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address 
+                   FROM Attractions 
+                   JOIN Listings ON Listings.city = Attractions.County 
+                   AND Listings.state = Attractions.State 
+                   WHERE Listings.id = '%${listingId}%' 
+                   AND (3959 * ACOS(COS(RADIANS(Listings.latitude)) * COS(RADIANS(Attractions.Lat)) * COS(RADIANS(Attractions.Lng) - RADIANS(Listings.longitude)) + SIN(RADIANS(Listings.latitude)) * SIN(RADIANS(Attractions.Lat)))) <= 5`, [listingId], (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      // Here, we return results of the query as an object, keeping only relevant data
+      // being name, type, and address
+      res.json(data.map((entry) => {
+        return {
+          name: entry.Name,
+          type: entry.Type,
+          address: entry.Address
+        };
+      }));
+    }
+  });
+};
+
 
 
 
@@ -382,5 +410,6 @@ module.exports = {
   top_songs,
   top_albums,
   search_songs,
-  top_hosts
+  top_hosts,
+  getAttractionsNearListing
 }
