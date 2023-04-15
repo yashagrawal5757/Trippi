@@ -365,18 +365,18 @@ const top_hosts = async function(req, res) {
   }
   });
   };
+  
 
-// SIMPLE 2: 
+// SIMPLE 2: attractions_nearby/:listingid
 
 const getAttractionsNearListing = async function(req, res) {
-  const listingId = req.query.title ?? '';
-
-  connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address 
+connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address 
                    FROM Attractions 
                    JOIN Listings ON Listings.city = Attractions.County 
                    AND Listings.state = Attractions.State 
-                   WHERE Listings.id = '%${listingId}%' 
-                   AND (3959 * ACOS(COS(RADIANS(Listings.latitude)) * COS(RADIANS(Attractions.Lat)) * COS(RADIANS(Attractions.Lng) - RADIANS(Listings.longitude)) + SIN(RADIANS(Listings.latitude)) * SIN(RADIANS(Attractions.Lat)))) <= 5`, [listingId], (err, data) => {
+                   WHERE Listings.id = "${req.params.listingid}"
+                   AND (3959 * ACOS(COS(RADIANS(Listings.latitude)) * COS(RADIANS(Attractions.Lat)) * COS(RADIANS(Attractions.Lng) - RADIANS(Listings.longitude)) + SIN(RADIANS(Listings.latitude)) * SIN(RADIANS(Attractions.Lat)))) <= 5`, 
+                   (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({});
@@ -395,7 +395,26 @@ const getAttractionsNearListing = async function(req, res) {
 };
 
 
-
+// // Route 6: GET /album_songs/:album_id
+// const album_songs = async function(req, res) {
+//   // TODO (TASK 7): implement a route that given an album_id, returns all songs on that album ordered by track number (ascending)
+//   connection.query(`SELECT S.* from Albums a JOIN Songs S on a.album_id = S.album_id
+// WHERE a.album_id = "${req.params.album_id}" ORDER BY S.number`
+//     , (err, data) => {
+//     if (err || data.length === 0) {
+//       console.log(err);
+//       res.json({});
+//     } else {
+//       res.json(data.map(song => ({
+//         song_id : song.song_id,
+//         title : song.title,
+//         number : song.number, 
+//         duration : song.duration,
+//         plays: song.plays
+//       })));
+//     }
+//   });
+// }
 
 
 
