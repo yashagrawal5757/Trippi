@@ -449,6 +449,143 @@ const getHostsWithListingsAndRatings = async function(req, res) {
   });
 };
 
+//Yash query 2 complex
+const getAttractionsWithinDistance = async function(req, res) {
+  connection.query(`WITH attraction_distances AS (
+                      SELECT a.Name, a.Type, a.Address, a.Lat, a.Lng, a.City, a.State, a.County,
+                             MIN(sqrt(pow(l.latitude - a.Lat, 2) + pow(l.longitude - a.Lng, 2))) AS distance
+                      FROM Attractions a
+                      JOIN Listings l ON l.city = a.County AND l.state = a.State
+                      WHERE l.city = 'Los Angeles' AND l.state = 'California' AND l.Price > 200
+                      GROUP BY a.Name, a.Type, a.Address, a.Lat, a.Lng, a.City, a.State, a.County
+                    )
+                    SELECT Name, Type, Address, Lat, Lng, City, State, County, distance AS min_distance
+                    FROM attraction_distances
+                    ORDER BY min_distance ASC
+                    LIMIT 20;`,
+                    (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data.map((entry) => {
+        return {
+          name: entry.Name,
+          type: entry.Type,
+          address: entry.Address,
+          lat: entry.Lat,
+          lng: entry.Lng,
+          city: entry.City,
+          state: entry.State,
+          county: entry.County,
+          min_distance: entry.min_distance
+        };
+      }));
+    }
+  });
+};
+
+
+const getHostStats = async function(req, res) {
+  const { city, state } = req.params;
+  
+  connection.query(`
+    WITH host_listings AS (
+      SELECT host_id, COUNT(*) AS num_listings, AVG(Price) AS avg_price
+      FROM Listings
+      WHERE city = "${city}" AND state = "${state}"
+      GROUP BY host_id
+    ), listing_reviews AS (
+      SELECT listing_id, COUNT(*) AS num_reviews
+      FROM Reviews
+      GROUP BY listing_id
+    )
+    SELECT h.host_name, hl.num_listings, hl.avg_price, SUM(lr.num_reviews) AS total_reviews
+    FROM Host h
+    JOIN host_listings hl ON h.host_id = hl.host_id
+    JOIN Listings l ON h.host_id = l.host_id
+    LEFT JOIN listing_reviews lr ON l.id = lr.listing_id
+    WHERE l.city = "${city}" AND l.state = "${state}"
+    GROUP BY h.host_name, hl.num_listings, hl.avg_price
+    ORDER BY hl.num_listings DESC
+    LIMIT 5;
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      const results = data.map((row) => {
+        return {
+          host_name: row.host_name,
+          num_listings: row.num_listings,
+          avg_price: row.avg_price,
+          total_reviews: row.total_reviews
+        };
+      });
+      res.json(results);
+}
+});
+};
+
+//Simple 5 : Find the top 10 reviewers who have reviewed the most listings, along with the number of listings they've reviewed.
+
+const getReviewerStats = async function(req, res) {
+  connection.query('WITH reviewer_stats AS ( SELECT reviewer_id, COUNT(DISTINCT listing_id) AS num_listings_reviewed FROM Reviews GROUP BY reviewer_id ) SELECT h.host_name AS reviewer_name, rs.num_listings_reviewed FROM reviewer_stats rs JOIN Host h ON rs.reviewer_id = h.host_id ORDER BY rs.num_listings_reviewed DESC LIMIT 10', (err, data) => {
+  if (err || data.length === 0) {
+  console.log(err);
+  res.json({});
+  } else {
+  const results = data.map((row) => {
+  return {
+  reviewer_name: row.reviewer_name,
+  num_listings_reviewed: row.num_listings_reviewed
+  };
+  });
+  res.json(results);
+}
+});
+}
+
+
+//query 6
+const gettop10neighborhoodsincitybypricewithpoolwifi = async function(req, res) {
+  connection.query(`WITH pool_listings AS (
+    SELECT l.id, l.city, l.state, l.neighborhood, l.price
+    FROM Listings l
+    WHERE l.amenities LIKE '%pool%' OR
+          l.amenities LIKE '%Wifi%'
+  ), neighborhood_averages AS (
+    SELECT pl.city, pl.state, pl.neighborhood, AVG(pl.price) AS avg_price
+    FROM pool_listings pl
+    GROUP BY pl.city, pl.state, pl.neighborhood
+  ), ranked_neighborhoods AS (
+    SELECT city, state, neighborhood, avg_price,
+        ROW_NUMBER() OVER (PARTITION BY city, state ORDER BY avg_price DESC) AS ranks
+    FROM neighborhood_averages
+  )
+  SELECT city, state, neighborhood, avg_price
+  FROM ranked_neighborhoods
+  WHERE ranks <= 10`
+  , 
+  (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        // Here, we return results of the query as an object, keeping only relevant data
+        // being name, type, and address
+        res.json(data.map((entry) => {
+          return {
+            id: entry.id,
+            city: entry.city,
+            state: entry.state,
+            price: entry.price,
+          };
+        }));
+      }
+    });
+  };
+
 
 module.exports = {
   author,
@@ -463,6 +600,9 @@ module.exports = {
   top_hosts,
   getAttractionsNearListing,
   getHostsInSameCity,
-  getHostsWithListingsAndRatings
-  
+  getHostsWithListingsAndRatings,
+  getAttractionsWithinDistance,
+  getHostStats,
+  getReviewerStats,
+  gettop10neighborhoodsincitybypricewithpoolwifi
 }
