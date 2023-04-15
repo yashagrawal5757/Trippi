@@ -347,6 +347,80 @@ const search_songs = async function(req, res) {
  
 // **************************PROJECT QUERY ROUTES *********************************
 
+
+
+// dumb queries
+// 1. reviews
+
+const reviews = async function(req, res) {
+  connection.query(`SELECT * FROM Reviews WHERE listing_id = "${req.params.listing_id}"`, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data.map(review => ({
+        review_id: review.rev_id,
+        listing_id: review.listing_id,
+        reviewer_id: review.reviewer_id,
+        review_name: review.review_name,
+        review_date: review.date,
+        comments: review.comments
+      })));
+    }
+  });
+}
+
+// 2. hosts
+const hosts = async function(req, res) {
+  connection.query(`SELECT h.host_id,host_name,id,name,description,neighborhood,Price,city,state FROM Listings l JOIN Host h ON h.host_id = l.host_id WHERE l.host_id = "${req.params.host_id}" `, 
+  (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data.map(host => ({
+        host_id: host.host_id,
+        host_name: host.host_name,
+        listing_id: host.id,
+        lisitng_name: host.name,
+        neighborhood: host.neighborhood,
+        price: host.Price,
+        city: host.city,
+        state: host.state
+      })));
+    }
+  });
+}
+
+// 3. search listing in city
+
+const searchListings = async function(req, res) {
+  const city = req.query.city ?? "Los Angeles";
+  const limit = req.query.limit ?? 100;
+  
+  
+
+  connection.query(`SELECT * FROM Listings WHERE city = "${city}"  LIMIT ${limit}`, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data.map(listing => ({
+        listing_id: listing.listing_id,
+        name: listing.name,
+        description: listing.description,
+        price: listing.Price,
+        city: listing.city,
+        neighborhood: listing.neighborhood
+      })));
+    }
+  });
+}
+
+
+
+
+
 // SIMPLE 1: Display the top hosts
 // top_hosts/
 
@@ -452,7 +526,7 @@ const getHostsWithListingsAndRatings = async function(req, res) {
 // SIMPLE 3: 
 
 const neighborhoods = async function(req, res) {
-  connection.query('WITH Neighbour AS ( SELECT neighborhood, name, price FROM Listings WHERE city in ("New York","Los Angeles") AND price < 200 ) SELECT neighborhood, GROUP_CONCAT(name SEPARATOR ", ") AS listings, GROUP_CONCAT(CAST(price AS CHAR) SEPARATOR ", ") AS prices FROM Neighbour GROUP BY neighborhood HAVING COUNT(*) >= 3',
+  connection.query('SELECT neighborhood, GROUP_CONCAT(name SEPARATOR ", ") AS listings, GROUP_CONCAT(CAST(price AS CHAR) SEPARATOR ", ") AS prices FROM ( SELECT neighborhood, name, price FROM Listings WHERE city in ("New York","Los Angeles") AND price < 200) AS Neighbour GROUP BY neighborhood HAVING COUNT(*) >= 3',
    (err, data) => {
   if (err || data.length === 0) {
   console.log(err);
@@ -479,7 +553,11 @@ module.exports = {
   top_songs,
   top_albums,
   search_songs,
-  
+
+  reviews, 
+  hosts,
+  searchListings,
+
   top_hosts,
   getAttractionsNearListing,
   getHostsInSameCity,

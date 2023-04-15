@@ -21,6 +21,10 @@ app.get('/top_albums', routes.top_albums);
 app.get('/search_songs', routes.search_songs);
 
 //************** new  ones ****************/ 
+app.get('/reviews/:listing_id', routes.reviews);
+app.get('/hosts/:host_id', routes.hosts);
+app.get('/search', routes.searchListings);
+
 
 app.get('/top_hosts', routes.top_hosts);
 app.get('/attractions_nearby/:listingid', routes.getAttractionsNearListing);
