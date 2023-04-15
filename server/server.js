@@ -20,6 +20,7 @@ app.get('/top_songs', routes.top_songs);
 app.get('/top_albums', routes.top_albums);
 app.get('/search_songs', routes.search_songs);
 
+//************** new  ones ****************/ 
 
 app.get('/top_hosts', routes.top_hosts);
 app.get('/attractions_nearby/:listingid', routes.getAttractionsNearListing);
@@ -28,8 +29,7 @@ app.get('/gethost_list_ratings', routes.getHostsWithListingsAndRatings);
 app.get('/attractions_within_distance', routes.getAttractionsWithinDistance);
 app.get('top_5_hosts/:city/:state', routes.getHostStats);
 app.get('/top_reviewers',routes.getReviewerStats);
-app.get('/hosts_top10neighborpoolwifi', routes.gettop10neighborhoodsincitybypricewithpoolwifi);
-
+app.get('/hosts_top10neighborpoolwifi', routes.gettop10neighborhoodsincitybypricewithpoolwifi);app.get('/get_neighborhoods', routes.neighborhoods);
 
 
 

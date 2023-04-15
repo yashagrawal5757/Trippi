@@ -449,6 +449,25 @@ const getHostsWithListingsAndRatings = async function(req, res) {
   });
 };
 
+// SIMPLE 3: 
+
+const neighborhoods = async function(req, res) {
+  connection.query('WITH Neighbour AS ( SELECT neighborhood, name, price FROM Listings WHERE city in ("New York","Los Angeles") AND price < 200 ) SELECT neighborhood, GROUP_CONCAT(name SEPARATOR ", ") AS listings, GROUP_CONCAT(CAST(price AS CHAR) SEPARATOR ", ") AS prices FROM Neighbour GROUP BY neighborhood HAVING COUNT(*) >= 3',
+   (err, data) => {
+  if (err || data.length === 0) {
+  console.log(err);
+  res.json({});
+  } else {
+  res.json(data.map(entry => ({
+  neighborhood: entry.neighborhood,
+  listings: entry.listings.split(', '),
+  prices: entry.prices.split(', ').map(Number)
+  })));
+  }
+  });
+  }
+
+
 //Yash query 2 complex
 const getAttractionsWithinDistance = async function(req, res) {
   connection.query(`WITH attraction_distances AS (
@@ -597,12 +616,11 @@ module.exports = {
   top_songs,
   top_albums,
   search_songs,
+  
   top_hosts,
   getAttractionsNearListing,
   getHostsInSameCity,
   getHostsWithListingsAndRatings,
-  getAttractionsWithinDistance,
-  getHostStats,
-  getReviewerStats,
-  gettop10neighborhoodsincitybypricewithpoolwifi
+  neighborhoods
+  
 }
