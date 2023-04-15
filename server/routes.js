@@ -605,6 +605,45 @@ const gettop10neighborhoodsincitybypricewithpoolwifi = async function(req, res) 
     });
   };
 
+  const gettop10attractions = async function(req, res) {
+    connection.query(`WITH nearby_listings AS (
+      SELECT id, city, state, latitude, longitude
+      FROM Listings
+      WHERE city = 'Los Angeles' AND state = 'California'
+    ), attractions_listings AS (
+      SELECT A.Name, A.Type, A.Address, COUNT(*) AS num_listings
+      FROM Attractions A
+      JOIN nearby_listings N ON ST_Distance_Sphere(point(A.Lng, A.Lat), point(N.longitude, N.latitude)) <= 1609.34
+      GROUP BY A.Name, A.Type, A.Address
+    ), top_attractions AS (
+      SELECT Name, Type, Address, num_listings,
+             ROW_NUMBER() OVER (ORDER BY num_listings DESC) AS attraction_rank
+      FROM attractions_listings
+    )
+    SELECT Name, Type, Address, num_listings
+    FROM top_attractions
+    WHERE attraction_rank <= 10`
+    , 
+    (err, data) => {
+        if (err || data.length === 0) {
+          console.log(err);
+          res.json({});
+        } else {
+          // Here, we return results of the query as an object, keeping only relevant data
+          // being name, type, and address
+          res.json(data.map((entry) => {
+            return {
+              id: entry.id,
+              city: entry.city,
+              state: entry.state,
+              latitude: entry.latitude,
+              longitude: entry.longitude
+            };
+          }));
+    }
+  });
+  };
+
 
 module.exports = {
   author,
@@ -621,6 +660,11 @@ module.exports = {
   getAttractionsNearListing,
   getHostsInSameCity,
   getHostsWithListingsAndRatings,
-  neighborhoods
+  getAttractionsWithinDistance,
+  getHostStats,
+  getReviewerStats,
+  gettop10neighborhoodsincitybypricewithpoolwifi,
+  neighborhoods,
+  gettop10attractions
   
 }

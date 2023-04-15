@@ -30,8 +30,8 @@ app.get('/attractions_within_distance', routes.getAttractionsWithinDistance);
 app.get('top_5_hosts/:city/:state', routes.getHostStats);
 app.get('/top_reviewers',routes.getReviewerStats);
 app.get('/hosts_top10neighborpoolwifi', routes.gettop10neighborhoodsincitybypricewithpoolwifi);app.get('/get_neighborhoods', routes.neighborhoods);
-
-
+app.get('/hosts_top10attractions', routes.gettop10attractions);
+app.get('/get_neighborhoods', routes.neighborhoods);
 
 
 app.listen(config.server_port, () => {
