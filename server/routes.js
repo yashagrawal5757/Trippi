@@ -395,9 +395,9 @@ const hosts = async function(req, res) {
 // 3. search listing in city
 
 const searchListings = async function(req, res) {
-  const city = req.query.city ?? "Los Angeles";
+  const city = req.query.city ?? "Chicago";
   const limit = req.query.limit ?? 100;
-  
+
   
 
   connection.query(`SELECT * FROM Listings WHERE city = "${city}"  LIMIT ${limit}`, (err, data) => {
