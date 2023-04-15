@@ -344,8 +344,11 @@ const search_songs = async function(req, res) {
        }
      });
 }
+ 
+// **************************PROJECT QUERY ROUTES *********************************
 
 // SIMPLE 1: Display the top hosts
+// top_hosts/
 
 const top_hosts = async function(req, res) {
   connection.query('SELECT h.host_name, COUNT(*) AS num_listings FROM Host h JOIN Listings l ON h.host_id = l.host_id GROUP BY h.host_name ORDER BY num_listings DESC LIMIT 10'
@@ -365,9 +368,10 @@ const top_hosts = async function(req, res) {
   }
   });
   };
-  
 
-// SIMPLE 2: attractions_nearby/:listingid
+
+// SIMPLE 2: GET NEARBY ATTRACTIONS OF A LISTING
+// attractions_nearby/:listingid
 
 const getAttractionsNearListing = async function(req, res) {
 connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address 
