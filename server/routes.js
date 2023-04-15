@@ -399,30 +399,6 @@ connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address
 };
 
 
-// // Route 6: GET /album_songs/:album_id
-// const album_songs = async function(req, res) {
-//   // TODO (TASK 7): implement a route that given an album_id, returns all songs on that album ordered by track number (ascending)
-//   connection.query(`SELECT S.* from Albums a JOIN Songs S on a.album_id = S.album_id
-// WHERE a.album_id = "${req.params.album_id}" ORDER BY S.number`
-//     , (err, data) => {
-//     if (err || data.length === 0) {
-//       console.log(err);
-//       res.json({});
-//     } else {
-//       res.json(data.map(song => ({
-//         song_id : song.song_id,
-//         title : song.title,
-//         number : song.number, 
-//         duration : song.duration,
-//         plays: song.plays
-//       })));
-//     }
-//   });
-// }
-
-
-
-
 module.exports = {
   author,
   random,
