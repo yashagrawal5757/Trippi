@@ -399,6 +399,57 @@ connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address
 };
 
 
+const getHostsInSameCity = async function(req, res) {
+  connection.query(`WITH target_host AS (
+                      SELECT host_id, city
+                      FROM Listings
+                      WHERE host_id = '${req.params.hostid}'
+                    )
+                    SELECT DISTINCT h.host_name
+                    FROM Host h
+                    JOIN Listings l ON h.host_id = l.host_id
+                    JOIN target_host th ON l.city = th.city
+                    WHERE h.host_id != th.host_id;`, 
+                    (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data.map((entry) => {
+        return {
+          host_name: entry.host_name
+        };
+      }));
+    }
+  });
+};
+
+//Yash query 1 complex
+const getHostsWithListingsAndRatings = async function(req, res) {
+  connection.query(`SELECT h.host_name, COUNT(l.id) AS num_listings, AVG(r.comments) AS avg_rating
+                    FROM Host h
+                    JOIN Listings l ON h.host_id = l.host_id
+                    LEFT JOIN Reviews r ON l.id = r.listing_id
+                    GROUP BY h.host_name
+                    HAVING COUNT(DISTINCT l.id) >= 5
+                    ORDER BY COUNT(DISTINCT l.id) DESC;`,
+                    (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data.map((entry) => {
+        return {
+          host_name: entry.host_name,
+          num_listings: entry.num_listings,
+          avg_rating: entry.avg_rating
+        };
+      }));
+    }
+  });
+};
+
+
 module.exports = {
   author,
   random,
@@ -411,5 +462,7 @@ module.exports = {
   search_songs,
   top_hosts,
   getAttractionsNearListing,
-  getHostsInSameCity
+  getHostsInSameCity,
+  getHostsWithListingsAndRatings
+  
 }
