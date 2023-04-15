@@ -399,6 +399,9 @@ connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address
 };
 
 
+
+
+
 module.exports = {
   author,
   random,
