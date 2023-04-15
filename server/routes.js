@@ -399,6 +399,34 @@ connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address
 };
 
 
+//Yash query 4
+
+const getHostsInSameCity = async function(req, res) {
+  connection.query(`WITH target_host AS (
+                      SELECT host_id, city
+                      FROM Listings
+                      WHERE host_id = '${req.params.hostid}'
+                    )
+                    SELECT DISTINCT h.host_name
+                    FROM Host h
+                    JOIN Listings l ON h.host_id = l.host_id
+                    JOIN target_host th ON l.city = th.city
+                    WHERE h.host_id != th.host_id;`, 
+                    (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data.map((entry) => {
+        return {
+          host_name: entry.host_name
+        };
+      }));
+    }
+  });
+};
+
+
 // // Route 6: GET /album_songs/:album_id
 // const album_songs = async function(req, res) {
 //   // TODO (TASK 7): implement a route that given an album_id, returns all songs on that album ordered by track number (ascending)
@@ -434,5 +462,6 @@ module.exports = {
   top_albums,
   search_songs,
   top_hosts,
-  getAttractionsNearListing
+  getAttractionsNearListing,
+  getHostsInSameCity
 }

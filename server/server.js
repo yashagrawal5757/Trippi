@@ -23,6 +23,8 @@ app.get('/search_songs', routes.search_songs);
 
 app.get('/top_hosts', routes.top_hosts);
 app.get('/attractions_nearby/:listingid', routes.getAttractionsNearListing);
+app.get('/hosts_samecity/:hostid', routes.getHostsInSameCity);
+
 
 
 
