@@ -19,7 +19,7 @@ connection.connect((err) => err && console.log(err));
 // Route 1: GET /author/:type
 const author = async function(req, res) {
   // TODO (TASK 1): replace the values of name and pennKey with your own
-  const name = 'Gokul Nair';
+  const name = 'Gokul, Shivani, Yash & Priyanka';
   const pennKey = 'gokuln';
 
   // checks the value of type the request parameters
@@ -35,6 +35,7 @@ const author = async function(req, res) {
     res.status(400).send(`'${req.params.type}' is not a valid author type. Valid types are 'name' and 'pennkey'.`);
   }
 }
+
 
 // Route 2: GET /random
 const random = async function(req, res) {
@@ -344,6 +345,33 @@ const search_songs = async function(req, res) {
      });
 }
 
+// Display the top hosts
+
+const top_hosts = async function(req, res) {
+  connection.query('SELECT h.host_name, COUNT(*) AS num_listings FROM Host h JOIN Listings l ON h.host_id = l.host_id GROUP BY h.host_name ORDER BY num_listings DESC LIMIT 10'
+   , (err, data) => {
+  if (err || data.length === 0) {
+  console.log(err);
+  res.json({});
+  } else {
+  // Here, we return results of the query as an object, keeping only relevant data
+  // being host_name and num_listings
+  res.json(data.map((entry) => {
+  return {
+  host_name: entry.host_name,
+  num_listings: entry.num_listings
+  };
+  }));
+  }
+  });
+  };
+
+
+
+
+
+
+
 module.exports = {
   author,
   random,
@@ -354,4 +382,5 @@ module.exports = {
   top_songs,
   top_albums,
   search_songs,
+  top_hosts
 }
