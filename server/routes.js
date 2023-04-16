@@ -106,7 +106,34 @@ const searchListings = async function(req, res) {
   });
 }
 
+//4. get attractions in a county and of a type
+// route endpoint -  /attractions
+const attractions = async function(req, res) {
+  const county = req.query.county ?? "New York";
+  const limit = req.query.limit ?? 100;
+  const type = req.query.type ?? "tourist"
 
+  
+
+  connection.query(`SELECT * FROM Attractions WHERE County = "${county}" and Type = "${type}" LIMIT ${limit}`, 
+  (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data.map(attractions => ({
+        county: attractions.County,
+        name: attractions.Name,
+        address: attractions.Address,
+        lat: attractions.Lat,
+        lng: attractions.Lng,
+        city: attractions.City,
+        state: attractions.State,
+        type: attractions.Type
+      })));
+    }
+  });
+}
 
 
 
@@ -413,6 +440,7 @@ module.exports = {
   reviews, 
   hosts,
   searchListings,
+  attractions,
 
   top_hosts,
   getAttractionsNearListing,
