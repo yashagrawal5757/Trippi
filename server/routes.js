@@ -38,7 +38,7 @@ const author = async function(req, res) {
 
 
 
-// dumb queries
+// basic queries
 // 1. reviews
 
 const reviews = async function(req, res) {
