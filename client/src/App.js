@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from '@mui/material'
-import { indigo, amber } from '@mui/material/colors'
+import { purple, green } from '@mui/material/colors'
 import { createTheme } from "@mui/material/styles";
 
 import NavBar from './components/NavBar';
@@ -11,11 +11,11 @@ import Reviews from './pages/Reviews';
 
 
 // createTheme enables you to customize the look and feel of your app past the default
-// in this case, we only change the color scheme
+// in this case, we change the primary and secondary colors to purple and green
 export const theme = createTheme({
   palette: {
-    primary: indigo,
-    secondary: amber,
+    primary: purple,
+    secondary: green,
   },
 });
 

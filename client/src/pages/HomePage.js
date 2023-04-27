@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Container, Divider, Link } from '@mui/material';
+import { Container, Divider, Link,Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import LazyTable from '../components/LazyTable';
+import logo from './/favicon.ico'; // Import the image file
 
 const config = require('../config.json');
 
@@ -87,21 +88,27 @@ export default function HomePage() {
 
   return (
     <Container>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <img src={logo} alt="Trippi favicon" style={{ marginRight: '10px' }} />
+        <Typography variant="h2" component="h2" fontWeight="bold">
+          Trippi : Your Travel Guide 
+        </Typography>
+      </div>
+  
       {/* SongCard is a custom component that we made. selectedSongId && <SongCard .../> makes use of short-circuit logic to only render the SongCard if a non-null song is selected */}
       <Divider />
       <h2>Top Hosts</h2>
       <LazyTable route={`http://${config.server_host}:${config.server_port}/top_hosts`} columns={hostColumns} />
       <Divider />
-
-      
+  
       {/* TODO (TASK 16): add a h2 heading, LazyTable, and divider for top albums. Set the LazyTable's props for defaultPageSize to 5 and rowsPerPageOptions to [5, 10] */}
       <h2>Top Listings</h2>
       <LazyTable route={`http://${config.server_host}:${config.server_port}/search`} columns={listingColumns} defaultPageSize={5} rowsPerPageOptions={[5, 10]}/>
       <Divider />
-
+  
       {/* TODO (TASK 17): add a paragraph (<p>text</p>) that displays the value of your author state variable from TASK 13 */}
       <p>{author}</p>
-
+  
     </Container>
   );
 };

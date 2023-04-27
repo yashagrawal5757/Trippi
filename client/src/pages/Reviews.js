@@ -4,6 +4,7 @@ import { Typography } from '@mui/material';
 import LazyTable from '../components/LazyTable';
 
 import { useParams } from 'react-router-dom';
+import { alignProperty } from '@mui/material/styles/cssUtils';
 
 const config = require('../config.json');
 
@@ -56,14 +57,14 @@ export default function ReviewsPage() {
   return (
     <Container maxWidth="lg">
    <Typography variant="h2" component="h2" fontWeight="bold" style={{ marginBottom: '16px' }}>
-   {listingInfo.listing_id} - {listingInfo.name}
+   {listingInfo.name}
 </Typography>
 <Typography variant="h4" component="h4" fontWeight="bold" style={{ marginBottom: '16px' }}>
   {listingInfo.city}, {listingInfo.state}
 </Typography>
 <Divider />
 
-<Typography variant="body1" style={{ marginBottom: '16px' }}>
+<Typography variant="body1" style={{ marginBottom: '16px', textAlign: 'justify' }}>
   {listingInfo.description}
 </Typography>
 

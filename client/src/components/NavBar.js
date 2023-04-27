@@ -6,13 +6,14 @@ import { NavLink } from 'react-router-dom';
 const NavText = ({ href, text, isMain }) => {
   return (
     <Typography
-      variant={isMain ? 'h5' : 'h7'}
+      variant={isMain ? 'h3' : 'subtitle1'}
       noWrap
       style={{
-        marginRight: '30px',
+        marginLeft: isMain ? 'auto' : '30px',
         fontFamily: 'monospace',
-        fontWeight: 700,
+        fontWeight: isMain ? 900 : 700,
         letterSpacing: '.3rem',
+        color: isMain ? '#fff' : '#e0e0e0'
       }}
     >
       <NavLink
@@ -33,12 +34,15 @@ const NavText = ({ href, text, isMain }) => {
 // props to how it changes the look of the component.
 export default function NavBar() {
   return (
-    <AppBar position='static'>
+    <AppBar position='static' sx={{ bgcolor: '#43a047' }}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
+        <link rel="shortcut icon" type="image/x-icon" href="/client/public/favicon.ico" />
+
           <NavText href='/' text='TRIPPI' isMain />
-          <NavText href='/attractions' text='ATTRACTIONS' />
-          <NavText href='/listings' text='LISTINGS' />
+          <div style={{ flexGrow: 1 }} />
+          <NavText href='/attractions' text='Attractions' />
+          <NavText href='/listings' text='Listings' />
         </Toolbar>
       </Container>
     </AppBar>
