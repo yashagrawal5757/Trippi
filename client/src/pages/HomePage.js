@@ -1,35 +1,24 @@
 import { useEffect, useState } from 'react';
 import { Container, Divider, Link } from '@mui/material';
 import { NavLink } from 'react-router-dom';
-
 import LazyTable from '../components/LazyTable';
-import SongCard from '../components/SongCard';
+
 const config = require('../config.json');
+
 
 export default function HomePage() {
   // We use the setState hook to persist information across renders (such as the result of our API calls)
-  const [songOfTheDay, setSongOfTheDay] = useState({});
+  
   // TODO (TASK 13): add a state variable to store the app author (default to '')
   const [author, setAuthor] = useState('')
 
-  const [selectedSongId, setSelectedSongId] = useState(null);
+
 
   // The useEffect hook by default runs the provided callback after every render
   // The second (optional) argument, [], is the dependency array which signals
   // to the hook to only run the provided callback if the value of the dependency array
   // changes from the previous render. In this case, an empty array means the callback
   // will only run on the very first render.
-  useEffect(() => {
-    // Fetch request to get the song of the day. Fetch runs asynchronously.
-    // The .then() method is called when the fetch request is complete
-    // and proceeds to convert the result to a JSON which is finally placed in state.
-    fetch(`http://${config.server_host}:${config.server_port}/random`)
-      .then(res => res.json())
-      .then(resJson => setSongOfTheDay(resJson));
-
-    // TODO (TASK 14): add a fetch call to get the app author (name not pennkey) and store it in the state variable
-  }, []);
-
   useEffect(() => {
     fetch(`http://${config.server_host}:${config.server_port}/author/name`)
     .then(res => res.text())
@@ -90,7 +79,7 @@ export default function HomePage() {
     },
     {
       field: 'state',
-      headerName: 'State'
+      headerName: 'City'
 
     },
 
@@ -99,10 +88,6 @@ export default function HomePage() {
   return (
     <Container>
       {/* SongCard is a custom component that we made. selectedSongId && <SongCard .../> makes use of short-circuit logic to only render the SongCard if a non-null song is selected */}
-      {selectedSongId && <SongCard songId={selectedSongId} handleClose={() => setSelectedSongId(null)} />}
-      <h2>Check out your song of the day:&nbsp;
-        <Link onClick={() => setSelectedSongId(songOfTheDay.song_id)}>{songOfTheDay.title}</Link>
-      </h2>
       <Divider />
       <h2>Top Hosts</h2>
       <LazyTable route={`http://${config.server_host}:${config.server_port}/top_hosts`} columns={hostColumns} />

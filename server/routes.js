@@ -39,10 +39,13 @@ const author = async function(req, res) {
 
 
 // basic queries
-// 1. reviews
+// 1. reviews/listing_id
 
 const reviews = async function(req, res) {
-  connection.query(`SELECT * FROM Reviews WHERE listing_id = "${req.params.listing_id}"`, (err, data) => {
+    const page = req.query.page;
+  const pageSize = req.query.page_size ? req.query.page_size : 10;
+  const offset = (page-1) * pageSize;
+  connection.query(`SELECT * FROM Reviews WHERE listing_id = "${req.params.listing_id}" ORDER BY date desc`, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({});
@@ -51,7 +54,7 @@ const reviews = async function(req, res) {
         review_id: review.rev_id,
         listing_id: review.listing_id,
         reviewer_id: review.reviewer_id,
-        review_name: review.review_name,
+        review_name: review.reviewer_name,
         review_date: review.date,
         comments: review.comments
       })));
@@ -84,7 +87,7 @@ const hosts = async function(req, res) {
 // 3. search listing in city
 
 const searchListings = async function(req, res) {
-  const city = req.query.city ?? "Chicago";
+  const city = req.query.city ?? "Los Angeles";
   const page = req.query.page;
   const pageSize = req.query.page_size ? req.query.page_size : 10;
   const offset = (page-1) * pageSize;
@@ -144,6 +147,28 @@ const states = async function(req, res) {
       res.json([]);
     } else {
       res.json(data.map(row => row.State));
+    }
+  });
+};
+
+// get inditivial listing detail:
+const listing = async function(req, res) {
+
+  connection.query(`SELECT * FROM Listings WHERE id = ${req.params.listing_id}`, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      const listing = data[0];
+      res.json({
+        listing_id: listing.id,
+        name: listing.name,
+        description: listing.description,
+        price: listing.Price,
+        city: listing.city, 
+        neighborhood: listing.neighborhood,
+        state: listing.state
+      });
     }
   });
 };
@@ -472,6 +497,7 @@ module.exports = {
   searchListings,
   attractions,
   states,
+  listing,
 
   top_hosts,
   getAttractionsNearListing,

@@ -19,7 +19,7 @@ app.get('/hosts/:host_id', routes.hosts);
 app.get('/search', routes.searchListings);
 app.get('/attractions', routes.attractions);
 app.get('/states', routes.states);
-
+app.get('/listing/:listing_id', routes.listing);
 
 
 app.get('/top_hosts', routes.top_hosts);
