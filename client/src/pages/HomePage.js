@@ -55,6 +55,10 @@ export default function HomePage() {
     {
       field: 'num_listings',
       headerName: 'Number of Listings'
+    },
+    {
+      field: 'avg_price',
+      headerName: 'Average Price of Listing($)'
     }
   ]
 

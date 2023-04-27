@@ -64,7 +64,7 @@ const hosts = async function(req, res) {
   connection.query(`SELECT h.host_id,host_name,id,name,description,neighborhood,Price,city,state FROM Listings l JOIN Host h ON h.host_id = l.host_id WHERE l.host_id = "${req.params.host_id}" `, 
   (err, data) => {
     if (err || data.length === 0) {
-      console.log(err);
+      console.log(err)
       res.json({});
     } else {
       res.json(data.map(host => ({
@@ -139,26 +139,42 @@ const attractions = async function(req, res) {
 
 // SIMPLE 1: Display the top hosts
 // top_hosts/
-
 const top_hosts = async function(req, res) {
-  connection.query('SELECT h.host_id, h.host_name, COUNT(*) AS num_listings FROM Host h JOIN Listings l ON h.host_id = l.host_id GROUP BY h.host_id, h.host_name ORDER BY num_listings DESC LIMIT 20 '
-   , (err, data) => {
-  if (err || data.length === 0) {
-  console.log(err);
-  res.json({});
-  } else {
-  // Here, we return results of the query as an object, keeping only relevant data
-  // being host_name, host_id and num_listings
-  res.json(data.map((entry) => {
-  return {
-  host_id: entry.host_id,
-  host_name: entry.host_name,
-  num_listings: entry.num_listings
-  };
-  }));
-  }
-  });
-  };
+  const page = req.query.page;
+  const pageSize = req.query.page_size ? req.query.page_size : 10;
+  const offset = (page-1) * pageSize;
+  
+  connection.query(`SELECT h.host_id, h.host_name, COUNT(*) AS num_listings, ROUND(AVG(l.Price),2) AS avg_price
+                     FROM (
+                        SELECT host_id, host_name FROM Host
+                     ) h
+                     JOIN (
+                        SELECT host_id, Price FROM Listings
+                     ) l ON h.host_id = l.host_id 
+                     GROUP BY h.host_id, h.host_name 
+                     ORDER BY num_listings DESC 
+                     LIMIT ${pageSize} OFFSET ${offset}`,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        // Here, we return results of the query as an object, keeping only relevant data
+        // being host_name, host_id and num_listings
+        res.json(data.map((entry) => {
+          return {
+            host_id: entry.host_id,
+            host_name: entry.host_name,
+            num_listings: entry.num_listings,
+            avg_price: entry.avg_price
+          };
+        }));
+      }
+    });
+};
+
+
+
 
 
 
