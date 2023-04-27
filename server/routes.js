@@ -141,16 +141,17 @@ const attractions = async function(req, res) {
 // top_hosts/
 
 const top_hosts = async function(req, res) {
-  connection.query('SELECT h.host_name, COUNT(*) AS num_listings FROM Host h JOIN Listings l ON h.host_id = l.host_id GROUP BY h.host_name ORDER BY num_listings DESC LIMIT 10'
+  connection.query('SELECT h.host_id, h.host_name, COUNT(*) AS num_listings FROM Host h JOIN Listings l ON h.host_id = l.host_id GROUP BY h.host_id, h.host_name ORDER BY num_listings DESC LIMIT 20 '
    , (err, data) => {
   if (err || data.length === 0) {
   console.log(err);
   res.json({});
   } else {
   // Here, we return results of the query as an object, keeping only relevant data
-  // being host_name and num_listings
+  // being host_name, host_id and num_listings
   res.json(data.map((entry) => {
   return {
+  host_id: entry.host_id,
   host_name: entry.host_name,
   num_listings: entry.num_listings
   };
@@ -158,6 +159,7 @@ const top_hosts = async function(req, res) {
   }
   });
   };
+
 
 
 // SIMPLE 2: GET NEARBY ATTRACTIONS OF A LISTING

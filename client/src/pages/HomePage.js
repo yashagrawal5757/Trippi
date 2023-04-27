@@ -42,22 +42,21 @@ export default function HomePage() {
   // of objects with each object representing a column. Each object has a "field" property representing
   // what data field to display from the raw data, "headerName" property representing the column label,
   // and an optional renderCell property which given a row returns a custom JSX element to display in the cell.
-  const songColumns = [
+  const hostColumns = [
     {
-      field: 'title',
-      headerName: 'Song Title',
-      renderCell: (row) => <Link onClick={() => setSelectedSongId(row.song_id)}>{row.title}</Link> // A Link component is used just for formatting purposes
+      field: 'host_id',
+      headerName: 'Host ID',
+      renderCell: (row) => <NavLink to={`/hosts/${row.host_id}`}>{row.host_id}</NavLink>
     },
     {
-      field: 'album',
-      headerName: 'Album',
-      renderCell: (row) => <NavLink to={`/albums/${row.album_id}`}>{row.album}</NavLink> // A NavLink component is used to create a link to the album page
+      field: 'host_name',
+      headerName: 'Host Name'
     },
     {
-      field: 'plays',
-      headerName: 'Plays'
-    },
-  ];
+      field: 'num_listings',
+      headerName: 'Number of Listings'
+    }
+  ]
 
   // TODO (TASK 15): define the columns for the top albums (schema is Album Title, Plays), where Album Title is a link to the album page
   // Hint: this should be very similar to songColumns defined above, but has 2 columns instead of 3
@@ -84,13 +83,13 @@ export default function HomePage() {
         <Link onClick={() => setSelectedSongId(songOfTheDay.song_id)}>{songOfTheDay.title}</Link>
       </h2>
       <Divider />
-      <h2>Top Songs</h2>
-      <LazyTable route={`http://${config.server_host}:${config.server_port}/top_songs`} columns={songColumns} />
+      <h2>Top Hosts</h2>
+      <LazyTable route={`http://${config.server_host}:${config.server_port}/top_hosts`} columns={hostColumns} />
       <Divider />
 
       
       {/* TODO (TASK 16): add a h2 heading, LazyTable, and divider for top albums. Set the LazyTable's props for defaultPageSize to 5 and rowsPerPageOptions to [5, 10] */}
-      <h2>Top Albums</h2>
+      <h2>Top Listings</h2>
       <LazyTable route={`http://${config.server_host}:${config.server_port}/top_albums`} columns={albumColumns} defaultPageSize={5} rowsPerPageOptions={[5, 10]}/>
       <Divider />
 
