@@ -85,26 +85,27 @@ const hosts = async function(req, res) {
 
 const searchListings = async function(req, res) {
   const city = req.query.city ?? "Chicago";
-  const limit = req.query.limit ?? 100;
+  const page = req.query.page;
+  const pageSize = req.query.page_size ? req.query.page_size : 10;
+  const offset = (page-1) * pageSize;
 
-  
-
-  connection.query(`SELECT * FROM Listings WHERE city = "${city}"  LIMIT ${limit}`, (err, data) => {
+  connection.query(`SELECT * FROM Listings WHERE city = "${city}" LIMIT ${pageSize} OFFSET ${offset}`, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({});
     } else {
       res.json(data.map(listing => ({
-        listing_id: listing.listing_id,
+        listing_id: listing.id,
         name: listing.name,
         description: listing.description,
         price: listing.Price,
-        city: listing.city,
-        neighborhood: listing.neighborhood
+        city: listing.city, 
+        neighborhood: listing.neighborhood,
+        state: listing.state
       })));
     }
   });
-}
+};
 
 //4. get attractions in a county and of a type
 // route endpoint -  /attractions
@@ -134,7 +135,18 @@ const attractions = async function(req, res) {
     }
   });
 }
+// get states for dropdown
 
+const states = async function(req, res) {
+  connection.query(`SELECT DISTINCT State from Attractions WHERE State != ""`, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.json([]);
+    } else {
+      res.json(data.map(row => row.State));
+    }
+  });
+};
 
 
 // SIMPLE 1: Display the top hosts
@@ -459,6 +471,7 @@ module.exports = {
   hosts,
   searchListings,
   attractions,
+  states,
 
   top_hosts,
   getAttractionsNearListing,

@@ -37,6 +37,7 @@ export default function HomePage() {
   }, []);
 
   
+ 
 
   // Here, we define the columns of the "Top Songs" table. The songColumns variable is an array (in order)
   // of objects with each object representing a column. Each object has a "field" property representing
@@ -64,16 +65,32 @@ export default function HomePage() {
 
   // TODO (TASK 15): define the columns for the top albums (schema is Album Title, Plays), where Album Title is a link to the album page
   // Hint: this should be very similar to songColumns defined above, but has 2 columns instead of 3
-  const albumColumns = [
+  const listingColumns = [
     {
-      field: 'title',
-      headerName: 'Album Title',
-      renderCell: (row) => <NavLink to={`/albums/${row.album_id}`}>{row.title}</NavLink>
+      field: 'listing_id',
+      headerName: 'Listing ID',
+      renderCell: (row) => <NavLink to={`/reviews/${row.listing_id}`}>{row.listing_id}</NavLink>
 
     },
     {
-      field: 'plays',
-      headerName: 'Plays'
+      field: 'name',
+      headerName: 'Name'
+
+    },
+    
+    {
+      field: 'price',
+      headerName: 'Price'
+
+    },
+    {
+      field: 'city',
+      headerName: 'City'
+
+    },
+    {
+      field: 'state',
+      headerName: 'State'
 
     },
 
@@ -94,7 +111,7 @@ export default function HomePage() {
       
       {/* TODO (TASK 16): add a h2 heading, LazyTable, and divider for top albums. Set the LazyTable's props for defaultPageSize to 5 and rowsPerPageOptions to [5, 10] */}
       <h2>Top Listings</h2>
-      <LazyTable route={`http://${config.server_host}:${config.server_port}/top_albums`} columns={albumColumns} defaultPageSize={5} rowsPerPageOptions={[5, 10]}/>
+      <LazyTable route={`http://${config.server_host}:${config.server_port}/search`} columns={listingColumns} defaultPageSize={5} rowsPerPageOptions={[5, 10]}/>
       <Divider />
 
       {/* TODO (TASK 17): add a paragraph (<p>text</p>) that displays the value of your author state variable from TASK 13 */}
