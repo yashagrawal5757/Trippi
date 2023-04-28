@@ -25,6 +25,7 @@ export const theme = createTheme({
 });
 
 
+
 const globalStyles = `
   a:link {
     color: ${theme.palette.secondary.main}; // Set the color of non-visited links to the main green color
