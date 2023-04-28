@@ -8,6 +8,8 @@ import HomePage from './pages/HomePage';
 import AlbumsPage from './pages/AlbumsPage';
 import SongsPage from './pages/SongsPage';
 import Reviews from './pages/Reviews';
+import Hosts from './pages/Hosts';
+
 
 
 // createTheme enables you to customize the look and feel of your app past the default
@@ -32,6 +34,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/albums" element={<AlbumsPage />} />
+          <Route path="/hosts/:host_id" element={<Hosts/>} />
           <Route path="/reviews/:listing_id" element={<Reviews/>} />
           <Route path="/songs" element={<SongsPage />} />
 

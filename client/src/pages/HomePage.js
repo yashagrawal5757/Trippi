@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Container, Divider, Link,Typography } from '@mui/material';
+import { Container, Divider,Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import LazyTable from '../components/LazyTable';
-import logo from './/favicon.ico'; // Import the image file
+import logo from './/flight.png'; // Import the image file
 
 const config = require('../config.json');
 
@@ -88,12 +88,14 @@ export default function HomePage() {
 
   return (
     <Container>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img src={logo} alt="Trippi favicon" style={{ marginRight: '10px' }} />
-        <Typography variant="h2" component="h2" fontWeight="bold">
-          Trippi : Your Travel Guide 
-        </Typography>
-      </div>
+<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+  <img src={logo} alt="Trippi favicon" style={{ marginRight: '10px', width: '70px', height: '70px' }} />
+  <Typography variant="h2" component="h2" fontWeight="bold">
+    Trippi : Your Travel Guide 
+  </Typography>
+</div>
+
+
   
       {/* SongCard is a custom component that we made. selectedSongId && <SongCard .../> makes use of short-circuit logic to only render the SongCard if a non-null song is selected */}
       <Divider />

@@ -45,7 +45,7 @@ const reviews = async function(req, res) {
     const page = req.query.page;
   const pageSize = req.query.page_size ? req.query.page_size : 10;
   const offset = (page-1) * pageSize;
-  connection.query(`SELECT * FROM Reviews WHERE listing_id = "${req.params.listing_id}" ORDER BY date desc`, (err, data) => {
+  connection.query(`SELECT * FROM Reviews WHERE listing_id = "${req.params.listing_id}" ORDER BY date desc LIMIT ${pageSize} OFFSET ${offset}`, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({});
@@ -219,12 +219,15 @@ const top_hosts = async function(req, res) {
 // attractions_nearby/:listingid
 
 const getAttractionsNearListing = async function(req, res) {
+  const page = req.query.page;
+  const pageSize = req.query.page_size ? req.query.page_size : 10;
+  const offset = (page-1) * pageSize;
 connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address 
                    FROM Attractions 
                    JOIN Listings ON Listings.city = Attractions.County 
                    AND Listings.state = Attractions.State 
                    WHERE Listings.id = "${req.params.listingid}"
-                   AND (3959 * ACOS(COS(RADIANS(Listings.latitude)) * COS(RADIANS(Attractions.Lat)) * COS(RADIANS(Attractions.Lng) - RADIANS(Listings.longitude)) + SIN(RADIANS(Listings.latitude)) * SIN(RADIANS(Attractions.Lat)))) <= 5`, 
+                   AND (3959 * ACOS(COS(RADIANS(Listings.latitude)) * COS(RADIANS(Attractions.Lat)) * COS(RADIANS(Attractions.Lng) - RADIANS(Listings.longitude)) + SIN(RADIANS(Listings.latitude)) * SIN(RADIANS(Attractions.Lat)))) <= 5 LIMIT ${pageSize} OFFSET ${offset}`, 
                    (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
