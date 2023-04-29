@@ -36,6 +36,17 @@ const author = async function(req, res) {
  
 // **************************PROJECT QUERY ROUTES *********************************
 
+const host_name = async function(req, res) {
+  connection.query(`SELECT host_name FROM Host WHERE host_id = "${req.params.host_id}"`, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json("");
+    } else {
+      res.json(data[0].host_name);
+    }
+  });
+}
+
 
 
 // basic queries
@@ -64,17 +75,24 @@ const reviews = async function(req, res) {
 
 // 2. hosts
 const hosts = async function(req, res) {
-  connection.query(`SELECT h.host_id,host_name,id,name,description,neighborhood,Price,city,state FROM Listings l JOIN Host h ON h.host_id = l.host_id WHERE l.host_id = "${req.params.host_id}" `, 
+  const page = req.query.page;
+  const pageSize = req.query.page_size ? req.query.page_size : 10;
+  const offset = (page-1) * pageSize;
+  connection.query(`SELECT h.host_id, host_name, l.id, name AS listing_name, description, neighborhood, Price, city, state 
+                    FROM Listings l 
+                    JOIN Host h ON h.host_id = l.host_id 
+                    WHERE l.host_id = "${req.params.host_id}"
+                    GROUP BY l.name LIMIT ${pageSize} OFFSET ${offset}`, 
   (err, data) => {
     if (err || data.length === 0) {
-      console.log(err)
+      console.log(err);
       res.json({});
     } else {
       res.json(data.map(host => ({
         host_id: host.host_id,
         host_name: host.host_name,
         listing_id: host.id,
-        lisitng_name: host.name,
+        lisitng_name: host.listing_name,
         neighborhood: host.neighborhood,
         price: host.Price,
         city: host.city,
@@ -83,6 +101,7 @@ const hosts = async function(req, res) {
     }
   });
 }
+
 
 // 3. search listing in city
 
@@ -181,7 +200,7 @@ const top_hosts = async function(req, res) {
   const pageSize = req.query.page_size ? req.query.page_size : 10;
   const offset = (page-1) * pageSize;
   
-  connection.query(`SELECT h.host_id, h.host_name, COUNT(*) AS num_listings, ROUND(AVG(l.Price),2) AS avg_price
+  connection.query(`SELECT h.host_id, h.host_name, COUNT(*) AS num_listings
                      FROM (
                         SELECT host_id, host_name FROM Host
                      ) h
@@ -248,39 +267,49 @@ connection.query(`SELECT Attractions.Name, Attractions.Type, Attractions.Address
 
 
 const getHostsInSameCity = async function(req, res) {
-  connection.query(`WITH target_host AS (
-                      SELECT host_id, city
-                      FROM Listings
-                      WHERE host_id = '${req.params.hostid}'
-                    )
-                    SELECT DISTINCT h.host_name
-                    FROM Host h
-                    JOIN Listings l ON h.host_id = l.host_id
-                    JOIN target_host th ON l.city = th.city
-                    WHERE h.host_id != th.host_id;`, 
-                    (err, data) => {
+  const page = req.query.page;
+  const pageSize = req.query.page_size ? req.query.page_size : 10;
+  const offset = (page-1) * pageSize;
+  connection.query(`
+    SELECT h.host_name, l.id AS listing_id, l.name AS listing_name
+    FROM Listings l
+    JOIN Host h ON l.host_id = h.host_id
+    WHERE l.city = (
+      SELECT city
+      FROM Listings
+      WHERE host_id = ?
+      LIMIT 1
+    ) AND h.host_id != ?
+    LIMIT ${pageSize} OFFSET ${offset}
+  `, 
+  [req.params.hostid, req.params.hostid], (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({});
     } else {
-      res.json(data.map((entry) => {
-        return {
-          host_name: entry.host_name
-        };
-      }));
+      res.json(data);
     }
   });
 };
 
+
 //Yash query 1 complex
 const getHostsWithListingsAndRatings = async function(req, res) {
   connection.query(`SELECT h.host_name, COUNT(l.id) AS num_listings, AVG(r.comments) AS avg_rating
-                    FROM Host h
-                    JOIN Listings l ON h.host_id = l.host_id
-                    LEFT JOIN Reviews r ON l.id = r.listing_id
-                    GROUP BY h.host_name
-                    HAVING COUNT(DISTINCT l.id) >= 5
-                    ORDER BY COUNT(DISTINCT l.id) DESC;`,
+FROM Host h
+JOIN Listings l ON h.host_id = l.host_id
+LEFT JOIN Reviews r ON l.id = r.listing_id
+WHERE EXISTS (
+  SELECT 1
+  FROM Listings l2
+  WHERE h.host_id = l2.host_id
+  GROUP BY l2.host_id
+  HAVING COUNT(DISTINCT l2.id) >= 5
+)
+AND h.host_id = '${req.params.hostid}'
+GROUP BY h.host_name
+ORDER BY num_listings DESC;
+`,
                     (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
@@ -346,6 +375,38 @@ const getAttractionsWithinDistance = async function(req, res) {
           state: entry.State,
           county: entry.County,
           min_distance: entry.min_distance
+        };
+      }));
+    }
+  });
+};
+// get hosts in same city with most listings
+const getHostsWithMostListings = async function(req, res) {
+  const page = req.query.page;
+  const pageSize = req.query.page_size ? req.query.page_size : 10;
+  const offset = (page-1) * pageSize;
+  connection.query(` SELECT  h.host_id, h.host_name, COUNT(l.id) AS num_listings
+    FROM Host h
+    JOIN Listings l ON h.host_id = l.host_id
+    WHERE l.city = (
+      SELECT city
+      FROM Listings
+      WHERE host_id = ?
+      LIMIT 1
+    ) AND h.host_id != ?
+    GROUP BY h.host_name
+    ORDER BY num_listings DESC
+    LIMIT ${pageSize} OFFSET ${offset}`,
+  [req.params.hostid, req.params.hostid], (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data.map((entry) => {
+        return {
+          host_id: entry.host_id,
+          host_name: entry.host_name,
+          num_listings: entry.num_listings
         };
       }));
     }
@@ -494,6 +555,7 @@ const gettop10neighborhoodsincitybypricewithpoolwifi = async function(req, res) 
 
 
 module.exports = {
+  host_name,
   author,
   reviews, 
   hosts,
@@ -505,6 +567,7 @@ module.exports = {
   top_hosts,
   getAttractionsNearListing,
   getHostsInSameCity,
+  getHostsWithMostListings,
   getHostsWithListingsAndRatings,
   getAttractionsWithinDistance,
   getHostStats,

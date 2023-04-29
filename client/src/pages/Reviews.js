@@ -26,6 +26,7 @@ export default function ReviewsPage() {
       fetch(`http://${config.server_host}:${config.server_port}/reviews/${listing_id}`)
       .then(res => res.json())
       .then(resJson => {
+        console.log("test log:" + resJson);
       setReviews(resJson);
       });
 
@@ -106,6 +107,10 @@ export default function ReviewsPage() {
             <LazyTable route={`http://${config.server_host}:${config.server_port}/reviews/${listing_id}`} columns={reviewColumns} defaultPageSize={5}/>
             ) }
         <Divider />
+
+
+
+        
       </Container>
     );
     

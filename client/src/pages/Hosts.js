@@ -1,97 +1,75 @@
 import { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { Container, Divider, Link } from '@mui/material';
-import { Typography } from '@mui/material';
 import LazyTable from '../components/LazyTable';
 
+
 import { useParams } from 'react-router-dom';
-import { alignProperty } from '@mui/material/styles/cssUtils';
+
 
 const config = require('../config.json');
 
 
+export default function HostsPage() {
 
-export default function ReviewsPage() {
-  const [listingInfo, setListingInfo] = useState({});
-  const { listing_id } = useParams();
-  const [reviewData, setReviews] = useState({});
-  const [reviewAttraction, setAttractions] = useState({});
-  
+  const {host_id} = useParams();
+  const [hostsData, setHosts] = useState({});
+  const [HostNameData, HostName] = useState('');
 
   useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/listing/${listing_id}`)
+    fetch(`http://${config.server_host}:${config.server_port}/hosts/${host_id}`)
       .then(res => res.json())
-      .then(resJson => setListingInfo(resJson));
+      .then(resJson => {
+        console.log(resJson); // add this line to log the response data
+        setHosts(resJson);
+      });
 
-      fetch(`http://${config.server_host}:${config.server_port}/reviews?listing_id=${listing_id}`)
+      fetch(`http://${config.server_host}:${config.server_port}/host_name/${host_id}`)
       .then(res => res.json())
-      .then(resJson => setReviews(resJson));
+      .then(resJson => {
+        console.log("lol",resJson); // add this line to log the response data
+        HostName(resJson);
+      });
+  }, [host_id]);
 
-      fetch(`http://${config.server_host}:${config.server_port}/attractions_nearby?listing_id=${listing_id}`)
-      .then(res => res.json())
-      .then(resJson => setAttractions(resJson));
-  }, [listing_id]);
+  const hostColumns = [
+    { field: 'host_name', headerName: 'Host Name' },
+    { field: 'listing_id', headerName: 'Listing ID',renderCell: (row) => <NavLink to={`/reviews/${row.listing_id}`}>{row.listing_id}</NavLink> },
+    { field: 'lisitng_name', headerName: 'Listing Name' },
+    { field: 'neighborhood', headerName: 'Neighborhood' },
+    { field: 'price', headerName: 'Price' },
+    { field: 'city', headerName: 'City' },
+    { field: 'state', headerName: 'State' },
+  ];
 
-  const reviewColumns = [
-    {
-    field: 'review_id',
-    headerName: 'Review ID'
-    },
+const get_host_list_ratings = [
+  { field: 'host_id', headerName: ' Host ID', renderCell: (row) => <NavLink to={`/hosts/${row.host_id}`}>{row.host_id}</NavLink> },
+    { field: 'host_name', headerName: 'Host Name' },  
+    {field: 'num_listings', headerName: 'Number of Listings' },
+];
 
-    {
-    field: 'reviewer_id',
-    headerName: 'Reviewer ID'
-    },
-    {
-    field: 'review_name',
-    headerName: 'Reviewer Name'
-    },
-    {
-    field: 'review_date',
-    headerName: 'Review Date'
-    },
-    {
-    field: 'comments',
-    headerName: 'Comments'
-    }
-    ];
-  
-    const attractionColumns = [
-      {
-        field: 'name',
-        headerName: 'Name'
-      },
-      {
-        field: 'type',
-        headerName: 'Type'
-      },
-      {
-        field: 'address',
-        headerName: 'Address'
-      }
-    ];
-    
 
   return (
     <Container maxWidth="lg">
-   <Typography variant="h2" component="h2" fontWeight="bold" style={{ marginBottom: '16px' }}>
-   {listingInfo.name}
-</Typography>
-<Typography variant="h4" component="h4" fontWeight="bold" style={{ marginBottom: '16px' }}>
-  {listingInfo.city}, {listingInfo.state}
-</Typography>
-<Divider />
 
-<Typography variant="body1" style={{ marginBottom: '16px', textAlign: 'justify' }}>
-  {listingInfo.description}
-</Typography>
+{/* <Typography variant="h3" component="h3" fontWeight="bold" style={{ marginBottom: '16px' }}>
+  {HostNameData ? HostNameData : "Loading..."}
+</Typography> */}
+{/* 
+  {HostNameData ? HostNameData : "Loading..."} */}
+   <p>
+  <h1 style={{ color: 'green' }}>{HostNameData}'s Listings</h1>
+</p>
 
-<h2> Nearby Attractions</h2>
-    <LazyTable route={`http://${config.server_host}:${config.server_port}/attractions_nearby/${listing_id}`} columns={attractionColumns} />
-    <Divider />
+      <h2> Host Listings</h2>
+      <LazyTable route={`http://${config.server_host}:${config.server_port}/hosts/${host_id}`} columns={hostColumns} />
+      <Divider />
+      <h2> Hosts in the same city with Most Listings</h2>
+      <LazyTable route={`http://${config.server_host}:${config.server_port}/get_mostpop_hosts/${host_id}`} columns={get_host_list_ratings} />
+      <Divider />
 
-    <h2>Reviews</h2>
-    <LazyTable route={`http://${config.server_host}:${config.server_port}/reviews/${listing_id}`} columns={reviewColumns} />
-    <Divider />
+{/*  get unique host name from host listings and print it */}
+
 
     </Container>
   );

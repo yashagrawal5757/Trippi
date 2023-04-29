@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import LazyTable from '../components/LazyTable';
 import logo from './/flight.png'; // Import the image file
 
+
 const config = require('../config.json');
 
 
@@ -20,11 +21,11 @@ export default function HomePage() {
   // to the hook to only run the provided callback if the value of the dependency array
   // changes from the previous render. In this case, an empty array means the callback
   // will only run on the very first render.
-  useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/author/name`)
-    .then(res => res.text())
-    .then(resText => setAuthor(resText));
-  }, []);
+  // useEffect(() => {
+  //   fetch(`http://${config.server_host}:${config.server_port}/author/name`)
+  //   .then(res => res.text())
+  //   .then(resText => setAuthor(resText));
+  // }, []);
 
   
  
@@ -46,10 +47,6 @@ export default function HomePage() {
     {
       field: 'num_listings',
       headerName: 'Number of Listings'
-    },
-    {
-      field: 'avg_price',
-      headerName: 'Average Price of Listing($)'
     }
   ]
 
@@ -80,7 +77,7 @@ export default function HomePage() {
     },
     {
       field: 'state',
-      headerName: 'City'
+      headerName: 'State'
 
     },
 
