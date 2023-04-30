@@ -17,9 +17,23 @@ import Hosts from './pages/Hosts';
 export const theme = createTheme({
   palette: {
     primary: purple,
-    secondary: green,
+    secondary: {
+      main: green[500], // Set the main color to green
+      darker: green[700], // Set a darker shade of green
+    },
   },
 });
+
+
+
+const globalStyles = `
+  a:link {
+    color: ${theme.palette.secondary.main}; // Set the color of non-visited links to the main green color
+  }
+  a:visited {
+    color: ${theme.palette.secondary.darker}; // Set the color of visited links to a darker shade of green
+  }
+`;
 
 // App is the root component of our application and as children contain all our pages
 // We use React Router's BrowserRouter and Routes components to define the pages for
@@ -29,6 +43,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <style>{globalStyles}</style> {/* Add the global styles */}
       <BrowserRouter>
         <NavBar />
         <Routes>

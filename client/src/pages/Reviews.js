@@ -26,6 +26,7 @@ export default function ReviewsPage() {
       fetch(`http://${config.server_host}:${config.server_port}/reviews/${listing_id}`)
       .then(res => res.json())
       .then(resJson => {
+        console.log("test log:" + resJson);
       setReviews(resJson);
       });
 
@@ -79,13 +80,14 @@ export default function ReviewsPage() {
 
     return (
       <Container maxWidth="lg">
-        <Typography variant="h2" component="h2" fontWeight="bold" style={{ marginBottom: '16px' }}>
-          {listingInfo.name}
-        </Typography>
-        <Typography variant="h4" component="h4" fontWeight="bold" style={{ marginBottom: '16px' }}>
-          {listingInfo.city}, {listingInfo.state}
-        </Typography>
-        <Divider />
+<Typography variant="h2" component="h2" fontWeight="bold" style={{ marginBottom: '16px', color: '#2E8B57' }}>
+  {listingInfo.name}
+</Typography>
+<Typography variant="h4" component="h4" fontWeight="bold" style={{ marginBottom: '16px', color: 'green' }}>
+  {listingInfo.city}, {listingInfo.state}
+</Typography>
+<Divider />
+
     
         <Typography variant="body1" style={{ marginBottom: '16px', textAlign: 'justify' }}>
           {listingInfo.description}
@@ -106,6 +108,10 @@ export default function ReviewsPage() {
             <LazyTable route={`http://${config.server_host}:${config.server_port}/reviews/${listing_id}`} columns={reviewColumns} defaultPageSize={5}/>
             ) }
         <Divider />
+
+
+
+        
       </Container>
     );
     
