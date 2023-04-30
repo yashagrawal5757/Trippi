@@ -4,7 +4,6 @@ import { DataGrid } from '@mui/x-data-grid';
 import { NavLink } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
-import { formatDuration } from '../helpers/formatter';
 const config = require('../config.json');
 
 
@@ -50,7 +49,8 @@ return (
   <Container>
       <Grid container spacing={2} alignItems="center" justify="center">
         <Grid item xs={12}>
-          <TextField id="name" label="Name" fullWidth value={name} onChange={e => setName(e.target.value)} />
+        <TextField id="name" label="Name" fullWidth value={name} onChange={e => setName(e.target.value)} sx={{ marginTop: '20px' }}  />
+
         </Grid>
         <Grid item xs={12}>
           <FormControl fullWidth>
@@ -71,21 +71,29 @@ return (
             Price
           </Typography>
           <Slider
-            value={price}
-            onChange={(e, newValue) => setPrice(newValue)}
-            min={0}
-            max={999}
-            valueLabelDisplay="auto"
-            aria-labelledby="range-slider"
-          />
-        </Grid>
+  value={price}
+  onChange={(e, newValue) => setPrice(newValue)}
+  min={0}
+  max={999}
+  valueLabelDisplay="auto"
+  aria-labelledby="range-slider"
+  sx={{
+    color: 'green',
+    '& .MuiSlider-thumb': {
+      backgroundColor: 'green'
+    },
+    '& .MuiSlider-valueLabel': {
+      backgroundColor: 'green'
+    }
+  }}
+/>     </Grid>
         {/* <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary">
             Search
           </Button>
         </Grid> */}
       </Grid>
-      <Button onClick={() => search() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
+      <Button onClick={() => search() } style={{ left: '50%', transform: 'translateX(-50%)', color : "green" }}>
         Search
       </Button>
     
@@ -95,6 +103,9 @@ return (
         rows={data}
         columns={columns}
         autoHeight
+        pagination
+        rowsPerPageOptions={[15, 25, 50, 100]}
+        pageSize={15}
       />
   </Container>
 );

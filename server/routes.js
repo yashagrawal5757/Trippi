@@ -231,8 +231,40 @@ const top_hosts = async function(req, res) {
 };
 
 
+//get_listings
+const search_listings = async function(req, res) {
+  const name = req.query.name ?? '';
+  const priceLow = req.query.price_low ?? 0;
+  const priceHigh = req.query.price_high ?? 100;
+  const city = req.query.city ?? 'New York';
+  const neighborhood = req.query.neighborhood ?? 'Harlem';
 
-
+  connection.query(`
+  SELECT *
+  FROM Listings
+  WHERE city LIKE '%${city}%' 
+    AND neighborhood LIKE '%${neighborhood}%'
+    AND name LIKE '%${name}%'
+    AND Price BETWEEN ${priceLow} AND ${priceHigh}
+    `, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.json([]);
+    } else {
+      const results = data.map(listing => {
+        return {
+          id: listing.id,
+          name: listing.name,
+          //description: listing.description,
+          price: listing.Price,
+          city: listing.city,
+          neighborhood: listing.neighborhood
+        };
+      });
+      res.json(results);
+    }
+  });
+};
 
 
 // SIMPLE 2: GET NEARBY ATTRACTIONS OF A LISTING
@@ -564,6 +596,7 @@ module.exports = {
   attractions,
   states,
   listing,
+  search_listings,
 
   top_hosts,
   getAttractionsNearListing,

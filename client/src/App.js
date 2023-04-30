@@ -6,7 +6,7 @@ import { createTheme } from "@mui/material/styles";
 import NavBar from './components/NavBar';
 import HomePage from './pages/HomePage';
 import AlbumsPage from './pages/AlbumsPage';
-import SongsPage from './pages/SongsPage';
+import Listings from './pages/Listings';
 import Reviews from './pages/Reviews';
 import Hosts from './pages/Hosts';
 
@@ -51,7 +51,7 @@ export default function App() {
           <Route path="/albums" element={<AlbumsPage />} />
           <Route path="/hosts/:host_id" element={<Hosts/>} />
           <Route path="/reviews/:listing_id" element={<Reviews/>} />
-          <Route path="/songs" element={<SongsPage />} />
+          <Route path="/get_listings" element={<Listings/>} />
 
         </Routes>
       </BrowserRouter>

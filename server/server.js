@@ -21,6 +21,7 @@ app.get('/search', routes.searchListings);
 app.get('/attractions', routes.attractions);
 app.get('/states', routes.states);
 app.get('/listing/:listing_id', routes.listing);
+app.get('/get_listings', routes.search_listings);
 
 
 app.get('/top_hosts', routes.top_hosts);

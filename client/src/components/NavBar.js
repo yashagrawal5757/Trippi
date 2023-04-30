@@ -42,7 +42,7 @@ export default function NavBar() {
           <NavText href='/' text='TRIPPI' isMain />
           <div style={{ flexGrow: 1 }} />
           <NavText href='/attractions' text='Attractions' />
-          <NavText href='/listings' text='Listings' />
+          <NavText href='/get_listings' text='Listings' />
         </Toolbar>
       </Container>
     </AppBar>
