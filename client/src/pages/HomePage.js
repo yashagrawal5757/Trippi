@@ -47,6 +47,10 @@ export default function HomePage() {
     {
       field: 'num_listings',
       headerName: 'Number of Listings'
+    },
+    {
+      field: 'host_identity_verified',
+      headerName: 'Host Identity Verified'
     }
   ]
 

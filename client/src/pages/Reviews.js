@@ -80,13 +80,14 @@ export default function ReviewsPage() {
 
     return (
       <Container maxWidth="lg">
-        <Typography variant="h2" component="h2" fontWeight="bold" style={{ marginBottom: '16px' }}>
-          {listingInfo.name}
-        </Typography>
-        <Typography variant="h4" component="h4" fontWeight="bold" style={{ marginBottom: '16px' }}>
-          {listingInfo.city}, {listingInfo.state}
-        </Typography>
-        <Divider />
+<Typography variant="h2" component="h2" fontWeight="bold" style={{ marginBottom: '16px', color: '#2E8B57' }}>
+  {listingInfo.name}
+</Typography>
+<Typography variant="h4" component="h4" fontWeight="bold" style={{ marginBottom: '16px', color: 'green' }}>
+  {listingInfo.city}, {listingInfo.state}
+</Typography>
+<Divider />
+
     
         <Typography variant="body1" style={{ marginBottom: '16px', textAlign: 'justify' }}>
           {listingInfo.description}

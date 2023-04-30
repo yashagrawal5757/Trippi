@@ -33,7 +33,6 @@ export default function HostsPage() {
   }, [host_id]);
 
   const hostColumns = [
-    { field: 'host_name', headerName: 'Host Name' },
     { field: 'listing_id', headerName: 'Listing ID',renderCell: (row) => <NavLink to={`/reviews/${row.listing_id}`}>{row.listing_id}</NavLink> },
     { field: 'lisitng_name', headerName: 'Listing Name' },
     { field: 'neighborhood', headerName: 'Neighborhood' },

@@ -200,14 +200,14 @@ const top_hosts = async function(req, res) {
   const pageSize = req.query.page_size ? req.query.page_size : 10;
   const offset = (page-1) * pageSize;
   
-  connection.query(`SELECT h.host_id, h.host_name, COUNT(*) AS num_listings
+  connection.query(`SELECT h.host_id, h.host_name, COUNT(*) AS num_listings, h.host_identity_verified
                      FROM (
-                        SELECT host_id, host_name FROM Host
+                        SELECT host_id, host_name,host_identity_verified FROM Host
                      ) h
                      JOIN (
                         SELECT host_id, Price FROM Listings
                      ) l ON h.host_id = l.host_id 
-                     GROUP BY h.host_id, h.host_name 
+                     GROUP BY h.host_id, h.host_name,h.host_identity_verified
                      ORDER BY num_listings DESC 
                      LIMIT ${pageSize} OFFSET ${offset}`,
     (err, data) => {
@@ -222,7 +222,8 @@ const top_hosts = async function(req, res) {
             host_id: entry.host_id,
             host_name: entry.host_name,
             num_listings: entry.num_listings,
-            avg_price: entry.avg_price
+            avg_price: entry.avg_price,
+            host_identity_verified : entry.host_identity_verified ? "✅" : '❌'
           };
         }));
       }
