@@ -165,9 +165,11 @@ const states = async function(req, res) {
       console.log(err);
       res.json([]);
     } else {
-      res.json(data.map(row => row.State));
+      res.json(data.map(row => ({
+        state : row.State
+    })));
     }
-  });
+  });
 };
 
 // get inditivial listing detail:
@@ -188,6 +190,124 @@ const listing = async function(req, res) {
         neighborhood: listing.neighborhood,
         state: listing.state
       });
+    }
+  });
+};
+
+  // search attraction of a given name
+  const searchAttractions = async function(req, res) {
+    const name = req.query.name;
+  
+    // Validate that a value was provided for the 'name' query parameter
+    if (!name) {
+      return res.status(400).json({ error: 'You must provide a value for the name query parameter.' });
+    }
+  
+    // Execute the SQL query to search for attractions by name
+    connection.query('SELECT * FROM Attractions WHERE Name = ?', [name], (err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: 'An error occurred while searching for attractions.' });
+      } else {
+        res.json(data);
+      }
+    });
+  };
+
+  // to search attraction by state when a statebox is clicked
+  const searchAttractionsbystate = async function(req, res) {
+    const state = req.query.state;
+  
+    // Validate that a value was provided for the 'state' query parameter
+    if (!state) {
+      return res.status(400).json({ error: 'You must provide a value for the State query parameter.' });
+    }
+  
+    // Execute the SQL query to search for attractions by name
+    connection.query('SELECT * FROM Attractions WHERE State = ?', [state], (err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: 'An error occurred while searching for attractions.' });
+      } else {
+        res.json(data);
+      }
+    });
+  };
+
+  // to show County filter in Attractions page for a given state
+const getCounties = async function (req, res) {
+  const state = req.query.state;
+
+  if (!state) {
+    return res.status(400).json({ error: 'You must provide a value for the State query parameter.' });
+  }
+
+  connection.query('SELECT DISTINCT County FROM Attractions WHERE State = ?', [state], (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: 'An error occurred while getting the available counties.' });
+    } else {
+      res.json(data.map((row) => row.County));
+    }
+  });
+};
+
+
+// to show Type filter in Attractions page for a given state
+const getTypes = async function (req, res) {
+  const state = req.query.state;
+
+  // Validate that a value was provided for the 'state' query parameter
+  if (!state) {
+    return res.status(400).json({ error: 'You must provide a value for the State query parameter.' });
+  }
+
+  // Execute the SQL query to get the available counties for the given state
+  connection.query('SELECT DISTINCT Type FROM Attractions WHERE State = ?', [state], (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: 'An error occurred while getting the available Types.' });
+    } else {
+      res.json(data.map((row) => row.Type));
+    }
+  });
+};
+
+
+
+
+
+
+// to search attraction by type and county in a state when a filter is applied
+const searchAttractionsbyCountyType = async function (req, res) {
+  const state = req.query.state;
+  const county = req.query.county;
+  const type = req.query.type;
+
+  // Validate that a value was provided for the 'state' query parameter
+  if (!state) {
+    return res.status(400).json({ error: 'You must provide a value for the State query parameter.' });
+  }
+
+  // Build the SQL query to get the attractions based on the provided filters
+  let query = 'SELECT * FROM Attractions WHERE State = ?';
+  let queryParams = [state];
+  if (county) {
+    query += ' AND County = ?';
+    queryParams.push(county);
+  }
+  if (type) {
+    query += ' AND Type = ?';
+    queryParams.push(type);
+  }
+
+  // Execute the SQL query to get the attractions based on the provided filters
+  connection.query(query, queryParams, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: 'An error occurred while getting the attractions.' });
+    } else {
+      res.json(data);
     }
   });
 };
@@ -597,6 +717,11 @@ module.exports = {
   states,
   listing,
   search_listings,
+  searchAttractions,
+  searchAttractionsbystate,
+  getCounties,
+  getTypes,
+  searchAttractionsbyCountyType,
 
   top_hosts,
   getAttractionsNearListing,

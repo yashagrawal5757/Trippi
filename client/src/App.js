@@ -8,6 +8,8 @@ import HomePage from './pages/HomePage';
 import Listings from './pages/Listings';
 import Reviews from './pages/Reviews';
 import Hosts from './pages/Hosts';
+import StateInfo from './pages/StateInfo'
+import Attractions from './pages/Attractions';
 
 
 
@@ -50,7 +52,8 @@ export default function App() {
           <Route path="/hosts/:host_id" element={<Hosts/>} />
           <Route path="/reviews/:listing_id" element={<Reviews/>} />
           <Route path="/get_listings" element={<Listings/>} />
-
+          <Route path="/state/:state" element={<StateInfo />} />
+          <Route path="/attractions" element={<Attractions />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

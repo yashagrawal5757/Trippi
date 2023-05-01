@@ -20,15 +20,21 @@ app.get('/hosts/:host_id', routes.hosts);
 app.get('/search', routes.searchListings);
 app.get('/attractions', routes.attractions);
 app.get('/states', routes.states);
+app.get('/searchAttractions', routes.searchAttractions);
+app.get('/searchAttractionsbystate', routes.searchAttractionsbystate);
+app.get('/getCounties', routes.getCounties);
+app.get('/getTypes', routes.getTypes);
+app.get('/searchAttractionsbyCountyType', routes.searchAttractionsbyCountyType);
+
+
+
+
 app.get('/listing/:listing_id', routes.listing);
 app.get('/get_listings', routes.search_listings);
-
-
 app.get('/top_hosts', routes.top_hosts);
 app.get('/attractions_nearby/:listingid', routes.getAttractionsNearListing);
 app.get('/hosts_samecity/:hostid', routes.getHostsInSameCity);
 app.get('/gethost_list_ratings/:hostid', routes.getHostsWithListingsAndRatings);
-
 app.get('/get_mostpop_hosts/:hostid', routes.getHostsWithMostListings);
 
 app.get('/attractions_within_distance', routes.getAttractionsWithinDistance);
