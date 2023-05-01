@@ -153,7 +153,7 @@ export default function HomePage() {
   <form onSubmit={handleSearch} style={{ display: "flex", alignItems: "center" }}>
 
     <Typography variant="h2" component="h2" fontWeight="bold" fontSize= "35px" marginLeft= "100px" >
-    Explore attractions by State
+    Explore Attractions by State
   </Typography>
     
     <TextField
