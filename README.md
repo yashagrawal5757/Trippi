@@ -32,8 +32,11 @@ To run the code locally, follow these steps:
 Navigate to the client folder in your terminal:
 
 ```console
+# client folder
 cd client
 npm start
+
+# server folder
 cd server
 npm start
 ```
