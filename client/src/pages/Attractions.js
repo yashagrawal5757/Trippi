@@ -281,7 +281,7 @@ export default function HomePage() {
             style={{ width: '100%', height: '70%', objectFit: 'cover', borderRadius: '2px 2px 0 0' }}
           />
 <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
-  <Typography variant="h7" color="#969996" component="h4" align="center" sx={{ fontFamily: 'Roboto, sans-serif', textDecoration: 'none'}}>
+  <Typography variant="h7" color="black" component="h4" align="center" sx={{ fontFamily: 'Roboto, sans-serif', textDecoration: 'none'}}>
     {state.state}
   </Typography>
 </CardContent>
