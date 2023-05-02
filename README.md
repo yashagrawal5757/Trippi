@@ -12,14 +12,13 @@ This project is developed by **Gokul, Shivani, Yash and Priyanka**.
 
 ### Technologies Used
 
-```bash
 - HTML
 - CSS
 - JavaScript
 - React
 - Node JS
 - MySQL
-```
+
 
 ### Development Team
 This project is developed by the following team members:
@@ -32,7 +31,7 @@ To run the code locally, follow these steps:
 ### Clone the repository to your local machine.
 Navigate to the client folder in your terminal:
 
-```bash
+```console
 cd client
 npm start
 cd server
