@@ -4,6 +4,6 @@
   "rds_user": "trippi550",
   "rds_password" : "Trpgpsy550",
   "rds_db": "Trippi",
-  "server_host": "localhost",
+  "server_host": "54.146.190.187",
   "server_port":"8080"
 }
