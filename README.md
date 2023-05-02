@@ -6,8 +6,8 @@ Trippi is built using HTML, CSS, JavaScript, React and Node JS, and uses a MySQL
 This project is developed by **Gokul, Shivani, Yash and Priyanka**.
 
 <div style="display:flex">
-  <img width="300" alt="Screenshot 2023-05-02 at 2 31 29 PM" src="https://user-images.githubusercontent.com/71208055/235754285-8afd64b1-7d8d-4962-91a6-806e8715573a.png">
-  <img width="300" alt="Screenshot 2023-05-02 at 2 31 18 PM" src="https://user-images.githubusercontent.com/71208055/235754300-9d44d063-1d76-4885-81bb-6fd16c8e3bb4.png">
+  <img width="400" alt="Screenshot 2023-05-02 at 2 31 29 PM" src="https://user-images.githubusercontent.com/71208055/235754285-8afd64b1-7d8d-4962-91a6-806e8715573a.png">
+  <img width="400" alt="Screenshot 2023-05-02 at 2 31 18 PM" src="https://user-images.githubusercontent.com/71208055/235754300-9d44d063-1d76-4885-81bb-6fd16c8e3bb4.png">
 </div>
 
 ### Technologies Used
