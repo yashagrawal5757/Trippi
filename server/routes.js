@@ -194,7 +194,31 @@ const listing = async function(req, res) {
   });
 };
 
-  // search attraction of a given name
+  // // search attraction of a given name
+  // const searchAttractions = async function(req, res) {
+  //   const name = req.query.name;
+  
+  //   // Validate that a value was provided for the 'name' query parameter
+  //   if (!name) {
+  //     return res.status(400).json({ error: 'You must provide a value for the name query parameter.' });
+  //   }
+  
+  //   // Execute the SQL query to search for attractions by name
+  //   connection.query('SELECT * FROM Attractions WHERE Name = ?', [name], (err, data) => {
+  //     if (err) {
+  //       console.log(err);
+  //       res.status(500).json({ error: 'An error occurred while searching for attractions.' });
+  //     } else {
+  //       if (data.length === 0) {
+  //         res.json({ message: 'No match' });
+  //       } else {
+  //         res.json(data);
+  //       }
+  //     }
+  //   });
+  // };
+  
+
   const searchAttractions = async function(req, res) {
     const name = req.query.name;
   
@@ -204,16 +228,27 @@ const listing = async function(req, res) {
     }
   
     // Execute the SQL query to search for attractions by name
-    connection.query('SELECT * FROM Attractions WHERE Name = ?', [name], (err, data) => {
+    connection.query(`
+      SELECT *
+      FROM Attractions
+      WHERE Name LIKE '%${name}%'
+      LIMIT 100
+    `, (err, data) => {
       if (err) {
         console.log(err);
         res.status(500).json({ error: 'An error occurred while searching for attractions.' });
       } else {
-        res.json(data);
+        if (data.length === 0) {
+          res.json({ message: 'No match' });
+        } else {
+          res.json(data);
+        }
       }
     });
   };
+  
 
+  
   // to search attraction by state when a statebox is clicked
   const searchAttractionsbystate = async function(req, res) {
     const state = req.query.state;
@@ -320,20 +355,16 @@ const top_hosts = async function(req, res) {
   const pageSize = req.query.page_size ? req.query.page_size : 10;
   const offset = (page-1) * pageSize;
   
-  connection.query(`SELECT h.host_id, h.host_name, COUNT(*) AS num_listings, h.host_identity_verified
-                     FROM (
-                        SELECT host_id, host_name,host_identity_verified FROM Host
-                     ) h
-                     JOIN (
-                        SELECT host_id, Price FROM Listings
-                     ) l ON h.host_id = l.host_id 
-                     GROUP BY h.host_id, h.host_name,h.host_identity_verified
-                     ORDER BY num_listings DESC 
-                     LIMIT ${pageSize} OFFSET ${offset}`,
+  connection.query(`SELECT h.host_id, h.host_name, h.host_identity_verified, COUNT(*) AS num_listings
+  FROM Host h
+  JOIN Listings l ON h.host_id = l.host_id
+  GROUP BY h.host_id, h.host_name, h.host_identity_verified
+  ORDER BY num_listings DESC 
+  LIMIT ${pageSize} OFFSET ${offset}`,
     (err, data) => {
       if (err || data.length === 0) {
         console.log(err);
-        res.json({});
+        res.status(500).send("Error retrieving data from the database");
       } else {
         // Here, we return results of the query as an object, keeping only relevant data
         // being host_name, host_id and num_listings
@@ -342,13 +373,13 @@ const top_hosts = async function(req, res) {
             host_id: entry.host_id,
             host_name: entry.host_name,
             num_listings: entry.num_listings,
-            avg_price: entry.avg_price,
-            host_identity_verified : entry.host_identity_verified ? "✅" : '❌'
+            host_identity_verified : entry.host_identity_verified ? "✔" : '❌'
           };
         }));
       }
     });
 };
+
 
 
 //get_listings
@@ -366,6 +397,7 @@ const search_listings = async function(req, res) {
     AND neighborhood LIKE '%${neighborhood}%'
     AND name LIKE '%${name}%'
     AND Price BETWEEN ${priceLow} AND ${priceHigh}
+    LIMIT 3000
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -448,21 +480,21 @@ const getHostsInSameCity = async function(req, res) {
 
 //Yash query 1 complex
 const getHostsWithListingsAndRatings = async function(req, res) {
-  connection.query(`SELECT h.host_name, COUNT(l.id) AS num_listings, AVG(r.comments) AS avg_rating
-FROM Host h
-JOIN Listings l ON h.host_id = l.host_id
-LEFT JOIN Reviews r ON l.id = r.listing_id
-WHERE EXISTS (
-  SELECT 1
-  FROM Listings l2
-  WHERE h.host_id = l2.host_id
-  GROUP BY l2.host_id
-  HAVING COUNT(DISTINCT l2.id) >= 5
-)
-AND h.host_id = '${req.params.hostid}'
-GROUP BY h.host_name
-ORDER BY num_listings DESC;
-`,
+  connection.query(`SELECT h.host_name,
+                      COUNT(l.id) AS num_listings,
+                      COUNT(r.listing_id) AS num_rating,
+                      AVG(l.price) AS avg_price
+               FROM Host h
+               JOIN (SELECT host_id
+                     FROM Listings
+                     GROUP BY host_id
+                     HAVING COUNT(*) >= 5) hl ON h.host_id = '${req.params.hostid}'
+               JOIN Listings l ON hl.host_id = l.host_id
+               LEFT JOIN Reviews r ON l.id = r.listing_id
+               WHERE l.price IS NOT NULL
+                 AND h.host_id = ?
+               GROUP BY h.host_name
+               ORDER BY COUNT(l.id) DESC`,
                     (err, data) => {
     if (err || data.length === 0) {
       console.log(err);

@@ -21,11 +21,12 @@ export default function HomePage() {
   // to the hook to only run the provided callback if the value of the dependency array
   // changes from the previous render. In this case, an empty array means the callback
   // will only run on the very first render.
-  // useEffect(() => {
-  //   fetch(`http://${config.server_host}:${config.server_port}/author/name`)
-  //   .then(res => res.text())
-  //   .then(resText => setAuthor(resText));
-  // }, []);
+
+  useEffect(() => {
+    fetch(`http://${config.server_host}:${config.server_port}/author/name`)
+    .then(res => res.text())
+    .then(resText => setAuthor(resText));
+  }, []);
 
   
  
@@ -90,12 +91,11 @@ export default function HomePage() {
   return (
     <Container>
 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-  <img src={logo} alt="Trippi favicon" style={{ marginRight: '10px', width: '70px', height: '70px' }} />
-  <Typography variant="h2" component="h2" fontWeight="bold">
+  <img src={logo} alt="Trippi favicon" style={{marginTop:'10px', marginRight: '10px', width: '70px', height: '70px' }} />
+  <Typography variant="h2" component="h2" fontWeight="bold" marginTop="15px">
     Trippi : Your Travel Guide 
   </Typography>
 </div>
-
 
   
       {/* SongCard is a custom component that we made. selectedSongId && <SongCard .../> makes use of short-circuit logic to only render the SongCard if a non-null song is selected */}
@@ -110,8 +110,10 @@ export default function HomePage() {
       <Divider />
   
       {/* TODO (TASK 17): add a paragraph (<p>text</p>) that displays the value of your author state variable from TASK 13 */}
-      <p>{author}</p>
+      <p style={{textAlign: 'left',fontSize: '14px'}}  >{author}</p>
   
     </Container>
+
+    
   );
 };

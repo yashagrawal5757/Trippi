@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
-import { Button, MenuItem, Typography, FormControl, InputLabel, Select, Checkbox, Container, FormControlLabel, Grid, Link, Slider, TextField } from '@mui/material';
+import { useEffect, useState, useCallback } from 'react';
+import { Button, MenuItem, Typography, FormControl, InputLabel, Select, Container, Grid, Link, Slider, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { NavLink } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 const config = require('../config.json');
 
+const cache = {};
 
 export default function SongsPage() {
   const [selectedListingId, setSelectedListingId] = useState(null);
@@ -17,33 +18,46 @@ export default function SongsPage() {
   const [price, setPrice] = useState([0, 1000]);
 
   useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/get_listings`)
-      .then(res => res.json())
-      .then(resJson => {
-        const listingsWithId = resJson.map((listing) => ({ id: listing.id, ...listing }));
-        setData(listingsWithId);
-      });
+    if (cache['allListings']) {
+      setData(cache['allListings']);
+    } else {
+      fetch(`http://${config.server_host}:${config.server_port}/get_listings`)
+        .then(res => res.json())
+        .then(resJson => {
+          const listingsWithId = resJson.map((listing) => ({ id: listing.id, ...listing }));
+          setData(listingsWithId);
+          cache['allListings'] = listingsWithId;
+        });
+    }
   }, []);
 
-  const search = () => {
-    
-    // Make a request to the backend with the search parameters
-    fetch(`http://${config.server_host}:${config.server_port}/get_listings?name=${name}`+`&neighborhood=${neighborhood}`+`&city=${city}`+`&price_low=${price[0]}`+`&price_high=${price[1]}`)
-      .then(res => res.json())
-      .then(resJson => {
-        const listingsWithId = resJson.map((listing) => ({id: listing.id, ...listing }));
-        setData(listingsWithId);
-      });
+  const search = useCallback(() => {
+    const searchParams = `name=${name}&neighborhood=${neighborhood}&city=${city}&price_low=${price[0]}&price_high=${price[1]}`;
+    if (cache[searchParams]) {
+      setData(cache[searchParams]);
+    } else {
+      fetch(`http://${config.server_host}:${config.server_port}/get_listings?${searchParams}`)
+        .then(res => res.json())
+        .then(resJson => {
+          const listingsWithId = resJson.map((listing) => ({id: listing.id, ...listing }));
+          setData(listingsWithId);
+          cache[searchParams] = listingsWithId;
+        });
+    }
+  }, [name, neighborhood, city, price]);
+
+  const handleSearch = () => {
+    search();
   }
 
-const columns = [
-  { field: 'id', headerName: 'ID', renderCell: (row) => <NavLink to={`/reviews/${row.id}`}>{row.id}</NavLink>
-},
-  {field : 'name', headerName : 'Name', width: 450 },
-{ field: 'city', headerName: 'City', width: 250 },
-{ field: 'neighborhood', headerName: 'Neighborhood', width: 250 },
-{ field: 'price', headerName: 'Price' },
-]
+  const columns = [
+    { field: 'id', headerName: 'ID', renderCell: (row) => <NavLink to={`/reviews/${row.id}`}>{row.id}</NavLink>
+  },
+    {field : 'name', headerName : 'Name', width: 450 },
+    { field: 'city', headerName: 'City', width: 250 },
+    { field: 'neighborhood', headerName: 'Neighborhood', width: 250 },
+    { field: 'price', headerName: 'Price' },
+  ]
 
 return (
   <Container>

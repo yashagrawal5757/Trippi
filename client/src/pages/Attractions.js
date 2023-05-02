@@ -21,6 +21,7 @@ import {
   TableCell,
   TableRow,
   Paper,
+  colors,
 } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
@@ -62,10 +63,9 @@ const config = require('../config.json');
 const columns = ['County', 'Name', 'Address', 'Lat', 'Lng', 'Type', 'State', 'City'];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: '#4caf50', // change this to the desired green color value
   color: theme.palette.common.white,
 }));
-
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: '#f5f5f5',
@@ -126,9 +126,15 @@ export default function HomePage() {
       .then((res) => res.json())
       .then((resJson) => {
         setSearchResults(resJson);
-        setIsDialogOpen(true);
+        if (resJson.length === 0) {
+          setIsDialogOpen(false);
+          alert('No results found');
+        } else {
+          setIsDialogOpen(true);
+        }
       });
   };
+  
 
   const handleSearchInput = (event) => {
     setQuery(event.target.value);
@@ -160,16 +166,23 @@ export default function HomePage() {
       label="Search Attractions"
       value={query}
       onChange={handleSearchInput}
+
       style={{ marginLeft: "100px", width: "500px" }}
     />
-    <Button
-      type="submit"
-      variant="contained"
-      color="primary"
-      style={{ marginLeft: "10px", height: "56px" }}
-    >
-      Search
-    </Button>
+<Button
+  type="submit"
+  variant="contained"
+  style={{
+    backgroundColor: "#43a047",
+    color: "#fff",
+    marginLeft: "10px",
+    height: "56px",
+    width: "100px"
+  }}
+>
+  Search
+</Button>
+
    
   </form>
 </div>
@@ -184,7 +197,7 @@ export default function HomePage() {
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
-                  <TableRow>
+                  <TableRow style={{ backgroundColor: '#43a047' }}>
                     <StyledTableCell>County</StyledTableCell>
                     <StyledTableCell>Attraction Name</StyledTableCell>
                     <StyledTableCell>Address</StyledTableCell>
@@ -226,7 +239,12 @@ export default function HomePage() {
     )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary">
+            <Button onClick={handleCloseDialog} style={{
+    color: "#43a047",
+    marginLeft: "10px",
+    height: "56px",
+    width: "100px"
+  }}>
               Close
             </Button>
           </DialogActions>
@@ -240,33 +258,40 @@ export default function HomePage() {
       <MapContainer lat={selectedAttraction['Lat']} lng={selectedAttraction['Lng']} />
     </DialogContent>
     <DialogActions>
-      <Button onClick={handleCloseMapDialog} color="primary">
+      <Button onClick={handleCloseMapDialog} style={{
+    color: "#43a047",
+    marginLeft: "10px",
+    height: "56px",
+    width: "100px"
+  }}>
         Close
       </Button>
     </DialogActions>
   </Dialog>
 )}
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-        {states.map((state) => (
-          <Link to={`/state/${state.state}`} key={state.state}>
-          <StateBox key={state.state} m={2}>
-            <Card sx={{ width: 250, height: 250, borderRadius: 2, cursor: 'pointer', transition: 'transform 0.3s' }}>
-              <img
-                src={`${process.env.PUBLIC_URL}/${state.state}.png`}
-                alt={`${state.state} flag`}
-                style={{ width: '100%', height: '70%', objectFit: 'cover', borderRadius: '2px 2px 0 0' }}
-              />
-              <CardContent>
-                <Typography variant="h5" component="h2" align="center">
-                  {state.state}
-                </Typography>
-              </CardContent>
-            </Card>
-          </StateBox>
-          </Link>
-        ))}
-      </Box>
+<Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+  {states.map((state) => (
+    <Link to={`/state/${state.state}`} key={state.state} style={{ textDecoration: 'none' }}>
+      <StateBox key={state.state} m={2}>
+        <Card sx={{ width: 300, height: 250, borderRadius: 1, cursor: 'pointer', transition: 'transform 0.3s' }}>
+          <img
+            src={`${process.env.PUBLIC_URL}/${state.state}.png`}
+            alt={`${state.state} flag`}
+            style={{ width: '100%', height: '70%', objectFit: 'cover', borderRadius: '2px 2px 0 0' }}
+          />
+<CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+  <Typography variant="h7" color="#969996" component="h4" align="center" sx={{ fontFamily: 'Roboto, sans-serif', textDecoration: 'none'}}>
+    {state.state}
+  </Typography>
+</CardContent>
+
+        </Card>
+      </StateBox>
+    </Link>
+  ))}
+</Box>
+
     </Box>
   );
         }

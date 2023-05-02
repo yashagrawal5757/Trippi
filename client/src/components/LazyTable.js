@@ -38,7 +38,7 @@ export default function LazyTable({ route, columns, defaultPageSize, rowsPerPage
     // the handler is called with parameter e (the event) and the value is e.target.value
     const newPageSize = e.target.value;
 
-    // TODO (TASK 18): set pageSize state variable and reset the current page to 1
+  
     setPageSize(newPageSize);
     setPage(1);
   }

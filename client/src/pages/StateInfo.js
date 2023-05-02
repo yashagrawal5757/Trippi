@@ -23,16 +23,27 @@ const config = require('../config.json');
 const columns = ['County', 'Name', 'Address', 'Lat', 'Lng', 'Type', 'State', 'City'];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  backgroundColor: '#212121',
+  backgroundColor: '#43a047',
+
   color: theme.palette.common.white,
+  fontSize: '16px', // add font size
+
+  fontWeight: theme.typography.fontWeightBold,
+  padding: '8px 16px', // adjust padding
+  margin: '10px' // adjust margin
+
 }));
+
+
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#e8f5e1',
+
   },
+  height: '40px' // adjust height
 }));
+
 
 export default function StateInfo() {
   const [attractions, setAttractions] = useState([]);
@@ -76,11 +87,12 @@ export default function StateInfo() {
 
   return (
     <Box>
-      <h1 style={{ marginBottom: '16px', fontSize: '24px', fontFamily: '"Cool Font", sans-serif', textAlign: 'center' }}>
-        Here are some of the attractions in {state}
-      </h1>
-      <Box display="flex" justifyContent="flex-start" alignItems="center" marginBottom="16px">
-        <FormControl variant="outlined" size="small" style={{ marginRight: '8px', width: '200px', height: '50px' }}>
+<h1 style={{ marginBottom: '16px', fontSize: '30px', fontFamily: '"Roboto", sans-serif', textAlign: 'center', color: 'green' }}>
+  Attractions in {state}
+</h1>
+
+      <Box display="flex" justifyContent="center" alignItems="center" marginBottom="16px">
+        <FormControl variant="outlined" size="small" style={{ marginRight: '8px', width: '200px', height: '40px' }}>
           <InputLabel id="county-select-label">County</InputLabel>
           <Select
             labelId="county-select-label"
@@ -98,7 +110,7 @@ export default function StateInfo() {
             ))}
           </Select>
         </FormControl>
-        <FormControl variant="outlined" size="small" style={{ marginRight: '8px', width: '200px', height: '50px' }}>
+        <FormControl variant="outlined" size="small" style={{ marginRight: '8px', width: '200px', height: '40px' }}>
           <InputLabel id="type-select-label">Type</InputLabel>
           <Select
             labelId="type-select-label"
@@ -116,11 +128,12 @@ export default function StateInfo() {
             ))}
           </Select>
         </FormControl>
-        <Button variant="contained" color="primary" onClick={handleSearch}>
-          Search
-        </Button>
+
+        <Button variant="contained" onClick={handleSearch} style={{ backgroundColor: '#43a047', color: 'white' }}>
+  Search
+</Button>
       </Box>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} style={{ margin: '1px' }}>
         <TablePagination
           rowsPerPageOptions={[10,25,50,100]}
           component="div"
